@@ -15,7 +15,7 @@ Everyone in the world wants to use their money better, to better understand how 
 
 One page provides login information, while the next page provides information about each amount of money you have invested in different sources, each with an optional button to share with other users. Underneath there is a totals section that provides information about the total amount of money invested, while there is also a shared values section in the lower-right hand side of the second page.
 
-
+![Design image](screenshot3.png)
 
 ### Key features
 
@@ -26,18 +26,17 @@ One page provides login information, while the next page provides information ab
 - Investment value updated via web-sourced values
 - Total investment values provided
 - Value consistently stored in server
-- 
 
 ### Technologies
 
 I am going to use the required technologies in the following ways.
 
-- **HTML** - Description here
-- **CSS** - Description here
-- **React** - Description here
-- **Service** - Description here
-- **DB/Login** - Description here
-- **WebSocket** - Description here
+- **HTML** - Provides skeleton-like structure of first page, login page. Also provides structure and content for second page with information on investments and hyperlink at the bottom for Github.
+- **CSS** - Aesthetic design that can appear on many devices. Most importantly easily visible investment totals and well selected colors for contrast/simple design.
+- **React** - Uses React for simple login and routing of shared investment totals between accounts.
+- **Service** - Backend service saves login information and shared information, with third-party access for investment information (i.e. stock or coin value).
+- **DB/Login** - Secure credentials stored, can't access financial information without credentials.
+- **WebSocket** - Broadcasts shared information inputs to other users.
 
 ## 🚀 AWS deliverable
 
