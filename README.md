@@ -42,21 +42,21 @@ I am going to use the required technologies in the following ways.
 
 For this deliverable I did the following. I checked the box `[x]` and added a description for things I completed.
 
-- [ ] **Server deployed and accessible with custom domain name** - [My server link](https://yourdomainnamehere.click).
+- [x] **Server deployed and accessible with custom domain name** - [My server link](https://mydinero.click).
 
 ## 🚀 HTML deliverable
 
 For this deliverable I did the following. I checked the box `[x]` and added a description for things I completed.
 
-- [ ] **HTML pages** - I added four HTML pages, for the home, about, personal investments, and shared investments pages.
-- [ ] **Proper HTML element usage** - I implemented different types of HTML structures, including sections, lists, and tables.
-- [ ] **Links** - I connected each part of the HTML files to each other and also linked the GitHub repository.
-- [ ] **Text** - I included descriptive text to explain and organize my files.
-- [ ] **3rd party API placeholder** - I included APIs for the current prices of securities.
-- [ ] **Images** - I uploaded an image for the head of my document that applies to the name of my startup.
-- [ ] **Login placeholder** - I inserted login placeholders that will connect in the future with the actual database.
-- [ ] **DB data placeholder** - I input placeholder data for the shared investments page.
-- [ ] **WebSocket placeholder** - I insert placeholders for the WebSocket HTTP functions that will provide live data in the future.
+- [x] **HTML pages** - I added four HTML pages, for the home, about, personal investments, and shared investments pages.
+- [x] **Proper HTML element usage** - I implemented different types of HTML structures, including sections, lists, and tables.
+- [x] **Links** - I connected each part of the HTML files to each other and also linked the GitHub repository.
+- [x] **Text** - I included descriptive text to explain and organize my files.
+- [x] **3rd party API placeholder** - I included APIs for the current prices of securities.
+- [x] **Images** - I uploaded an image for the head of my document that applies to the name of my startup.
+- [x] **Login placeholder** - I inserted login placeholders that will connect in the future with the actual database.
+- [x] **DB data placeholder** - I input placeholder data for the shared investments page.
+- [x] **WebSocket placeholder** - I insert placeholders for the WebSocket HTTP functions that will provide live data in the future.
 
 ## 🚀 CSS deliverable
 
