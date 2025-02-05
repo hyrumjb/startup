@@ -5,69 +5,84 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <title>My Investments</title>
         <link rel="icon" href="images/icon.png" />
+
+        <link rel="stylesheet" href="main.css" />
+        <link rel="styleshee" href="finances.css" />
+
+        <link
+            href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css"
+            rel="stylesheet"
+            integrity="sha384-Zenh87qX5JnK2Jl0vWa8Ck2rdkQ2Bzep5IDxbcnCeuOxjzrPF/et3URy9Bv1WTRi"
+            crossorigin="anonymous"
+        />
     </head>
 
-    <body>
-        <header>
+    <body class="bg-dark text-light">
+        <header class="container-fluid">
             <h1>myDinero</h1>
             <h3>The simple money interface</h3>
-            <nav>
-                <menu>
-                    <li><a href="index.html">Home</a></li>
-                    <li><a href="finances.html">My Investments</a></li>
-                    <li><a href="shared.html">Shared Investments</a></li>
-                    <li><a href="about.html">About</a></li>
+            <nav class="navbar sticky-top navbar-dark">
+                <menu class="navbar-nav">
+                    <li class="nav-item"><a class="nav-link active" href="index.html">Home</a></li>
+                    <li class="nav-item"><a class="nav-link active" href="finances.html">My Investments</a></li>
+                    <li class="nav-item"><a class="nav-link active" href="shared.html">Shared Investments</a></li>
+                    <li class="nav-item"><a class="nav-link active" href="about.html">About</a></li>
                 </menu>
             </nav>
             <hr />
         </header>
 
-        <main>
-            <p>Username's Investments</p>
-            <section>
-                <h3>Current Investments</h3>
-                <table>
-                    <tr>
-                        <th><i>Investment</i></th>
-                        <th>Bitcoin</th>
-                        <th>Tesla</th>
-                        <th>Ethereum</th>
-                    </tr>
-                    <tr>
-                        <th><i>Amount</i></th>
-                        <td>0.003</td>
-                        <td>4.33</td>
-                        <td>0.84</td>
-                    </tr>
-                    <tr>
-                        <th><i>Value</i></th>
-                        <td>$433.23</td>
-                        <td>$560.23</td>
-                        <td>$1,640.34</td>
-                    </tr>
-                </table>
-            <section>
-                <p><i>Total Value: $2,539.45</i></p>
-            </section>
-            <section>
-                <h3>Add Investment</h3>
-                <div>
-                    <span>Investment</span>
-                    <input type="text" placeholder="Berkshire Hathaway" />
-                </div>
-                <div>
-                    <span>Amount</span>
-                    <input type="text" placeholder="278.3" />
-                </div>
-                <button type="submit">Add Information</button>
-            </section>
+        <main class="bg-secondary">
+            <div class="container">
+                <div class="player-name">Username's Investments</div>
+                <section class="investments">
+                    <h3>Current Investments</h3>
+                    <table class="table">
+                        <tr>
+                            <th class="table"><i>Investment</i></th>
+                            <th class="table">Bitcoin</th>
+                            <th class="table">Tesla</th>
+                            <th class="table">Ethereum</th>
+                        </tr>
+                        <tr>
+                            <th scope="row">Amount</th>
+                            <td>0.003</td>
+                            <td>4.33</td>
+                            <td>0.84</td>
+                        </tr>
+                        <tr>
+                            <th scope="row">Value</th>
+                            <td>$433.23</td>
+                            <td>$560.23</td>
+                            <td>$1,640.34</td>
+                        </tr>
+                    </table>
+                </section>
+                <section class="total">
+                    <p><i>Total Value: $2,539.45</i></p>
+                </section>
+                <section class="add-investments">
+                    <h3>Add Investment</h3>
+                    <div>
+                        <span>Investment</span>
+                        <input type="text" placeholder="Berkshire Hathaway" />
+                    </div>
+                    <div>
+                        <span>Amount</span>
+                        <input type="text" placeholder="278.3" />
+                    </div>
+                    <button class="btn btn-primary" type="submit">Add Information</button>
+                </section>
+            </div>
         </main>
 
-        <footer>
-            <hr />
-            <span class="text-reset">Hyrum Bradshaw</span>
-            <br />
-            <a href="https://github.com/hyrumjb/startup">GitHub</a>
+        <footer class="bg-dark text-white-50">
+            <div class="container-fluid">
+                <hr />
+                <span class="text-reset">Hyrum Bradshaw</span>
+                <br />
+                <a class="text-reset" href="https://github.com/hyrumjb/startup">GitHub</a>
+            </div>
         </footer>
     </body>
 </html>
