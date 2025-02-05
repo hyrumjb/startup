@@ -9,16 +9,19 @@ main {
 
 .investments {
     color: black;
-}
-
-.table {
-
+    margin-bottom: 20px;
 }
 
 .total {
     color: black;
+    margin-bottom: 40px;
 }
 
-.add-investments {
+.inputs {
+    margin-bottom: 10px;
+}
 
+.top-head {
+    color: white;
+    text-align: center;
 }
