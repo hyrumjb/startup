@@ -4,10 +4,11 @@ main {
 
 .player-name {
     margin-left: auto;
+    color: rgb(0, 0, 0)
 }
 
 .investments {
-
+    color: black;
 }
 
 .table {
@@ -15,7 +16,7 @@ main {
 }
 
 .total {
-
+    color: black;
 }
 
 .add-investments {
