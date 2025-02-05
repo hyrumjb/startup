@@ -1,3 +1,8 @@
+.custom-bg {
+    background-color: navy;
+    color: lightgray;
+}
+
 body {
     display: flex;
     flex-direction: column;
@@ -33,6 +38,7 @@ menu .nav-item{
 
 footer a {
     float: right;
+    margin-bottom: 0.5em;
 }
 
 @media (max-height: 600px) {
