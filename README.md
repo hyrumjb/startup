@@ -10,12 +10,12 @@ Everyone in the world wants to use their money better, to better understand how 
 
 ### Design
 
-![Design image](screenshot.png)
-![Design image](screenshot2.png)
+![Design image](images/screenshot.png)
+![Design image](images/screenshot2.png)
 
 One page provides login information, while the next page provides information about each amount of money you have invested in different sources, each with an optional button to share with other users. Underneath there is a totals section that provides information about the total amount of money invested, while there is also a shared values section in the lower-right hand side of the second page.
 
-![Design image](screenshot3.png)
+![Design image](images/screenshot3.png)
 
 ### Key features
 
@@ -62,12 +62,12 @@ For this deliverable I did the following. I checked the box `[x]` and added a de
 
 For this deliverable I did the following. I checked the box `[x]` and added a description for things I completed.
 
-- [ ] **Header, footer, and main content body** - I did not complete this part of the deliverable.
-- [ ] **Navigation elements** - I did not complete this part of the deliverable.
-- [ ] **Responsive to window resizing** - I did not complete this part of the deliverable.
-- [ ] **Application elements** - I did not complete this part of the deliverable.
-- [ ] **Application text content** - I did not complete this part of the deliverable.
-- [ ] **Application images** - I did not complete this part of the deliverable.
+- [x] **Header, footer, and main content body** - I designed my own header, created ways to space out and organize the main content of the body, and added a minimalist footer.
+- [x] **Navigation elements** - I tried to design the navigation as simply as possible so it would be easily visible.
+- [x] **Responsive to window resizing** - I controlled all the sizes of elements so it can apply on mobile or different types of computers.
+- [x] **Application elements** - I organized the application so it's easy to understand what information is provided where.
+- [x] **Application text content** - I used simple font and added filler content for investment information.
+- [x] **Application images** - I added an image on my about page to gift it a bit of flavor and pop.
 
 ## 🚀 React part 1: Routing deliverable
 
