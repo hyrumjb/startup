@@ -1,0 +1,22 @@
+main {
+    display: flex;
+}
+
+.player-name {
+    margin-left: auto;
+    color: rgb(0, 0, 0)
+}
+
+.investments {
+    color: black;
+    margin-bottom: 20px;
+}
+
+.inputs {
+    margin-bottom: 10px;
+}
+
+.top-head {
+    color: white;
+    text-align: center;
+}
