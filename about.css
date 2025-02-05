@@ -1,0 +1,22 @@
+.image {
+    max-width: 40%;
+    height: auto;
+}
+
+.picture-box {
+    display: inline-block;
+    margin-bottom: 1em;
+    padding: 0.5em;
+    background: rgb(86, 89, 93);
+    border-radius: 5px;
+}
+
+.quote-box {
+    margin-top: 1em;
+    padding: 0.5em;
+    border-radius: 5px;
+}
+
+.quote {
+    font-style: italic;
+}
