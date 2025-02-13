@@ -1,0 +1,31 @@
+{
+  "name": "startup",
+  "version": "1.0.0",
+  "description": "This is a simple application that allows users to create an account, input their investments, and check the live value of each part of their portfolio. It provides tools to update as well based on interest earned and salary earned.",
+  "main": "index.js",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/hyrumjb/startup.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/hyrumjb/startup/issues"
+  },
+  "homepage": "https://github.com/hyrumjb/startup#readme",
+  "devDependencies": {
+    "vite": "^6.1.0"
+  },
+  "dependencies": {
+    "react": "^19.0.0",
+    "react-bootstrap": "^2.10.9",
+    "react-dom": "^19.0.0",
+    "react-router-dom": "^7.1.5"
+  }
+}
