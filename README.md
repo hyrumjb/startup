@@ -10,12 +10,12 @@ Everyone in the world wants to use their money better, to better understand how 
 
 ### Design
 
-![Design image](images/screenshot.png)
-![Design image](images/screenshot2.png)
+![Design image](public/screenshot.png)
+![Design image](public/screenshot2.png)
 
 One page provides login information, while the next page provides information about each amount of money you have invested in different sources, each with an optional button to share with other users. Underneath there is a totals section that provides information about the total amount of money invested, while there is also a shared values section in the lower-right hand side of the second page.
 
-![Design image](images/screenshot3.png)
+![Design image](public/screenshot3.png)
 
 ### Key features
 
@@ -73,9 +73,9 @@ For this deliverable I did the following. I checked the box `[x]` and added a de
 
 For this deliverable I did the following. I checked the box `[x]` and added a description for things I completed.
 
-- [ ] **Bundled using Vite** - I did not complete this part of the deliverable.
-- [ ] **Components** - I did not complete this part of the deliverable.
-- [ ] **Router** - Routing between login and voting components.
+- [x] **Bundled using Vite** - I did not complete this part of the deliverable.
+- [x] **Components** - I did not complete this part of the deliverable.
+- [x] **Router** - Routing between login and voting components.
 
 ## 🚀 React part 2: Reactivity
 
