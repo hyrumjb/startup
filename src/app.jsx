@@ -21,7 +21,7 @@ export default function App() {
                     </div>
                     <nav className="navbar sticky-top navbar-dark">
                         <menu className="nav col-12 col-md-auto mb-2 justify-content-center mb-md-0">
-                            <li className="nav-item"><NavLink className="nav-link active px-2 link-secondary" to="login">Home</NavLink></li>
+                            <li className="nav-item"><NavLink className="nav-link active px-2 link-secondary" to="">Home</NavLink></li>
                             <li className="nav-item"><NavLink className="nav-link active px-2 link-secondary" to="finances">My Investments</NavLink></li>
                             <li className="nav-item"><NavLink className="nav-link active px-2 link-secondary" to="shared">Shared Investments</NavLink></li>
                             <li className="nav-item"><NavLink className="nav-link active px-2 link-secondary" to="about">About</NavLink></li>
