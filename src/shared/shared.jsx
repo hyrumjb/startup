@@ -52,11 +52,11 @@ export function Shared() {
                 <h3>Share Investment</h3>
                 <div class="inputs">
                     <div>
-                        <span>Investment</span>
+                        <span>Investment  </span>
                         <input type="text" placeholder="Berkshire Hathaway" />
                     </div>
                     <div>
-                        <span>User</span>
+                        <span>User  </span>
                         <input type="text" placeholder="jackdorsey" />
                     </div>
                 </div>

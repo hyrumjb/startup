@@ -6,7 +6,7 @@ export function About() {
   return (
     <main className="container-fluid bg-secondary text-center">
         <div>
-            <div id="picture"><img className="image" src="public/quote.jpg" alt="image" /></div>
+            <div id="picture"><img className="image" src="/quote.jpg" alt="image" /></div>
             <p>
                 myDinero is not like other financial software.
             </p>

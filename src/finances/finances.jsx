@@ -57,11 +57,11 @@ export function Finances() {
                     <h3>Add Investment</h3>
                     <div class="inputs">
                         <div>
-                            <span>Investment</span>
+                            <span>Investment  </span>
                             <input type="text" placeholder="Berkshire Hathaway" />
                         </div>
                         <div>
-                            <span>Amount</span>
+                            <span>Amount  </span>
                             <input type="text" placeholder="278.3" />
                         </div>
                     </div>
