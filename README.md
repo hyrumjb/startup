@@ -73,9 +73,9 @@ For this deliverable I did the following. I checked the box `[x]` and added a de
 
 For this deliverable I did the following. I checked the box `[x]` and added a description for things I completed.
 
-- [x] **Bundled using Vite** - I did not complete this part of the deliverable.
-- [x] **Components** - I did not complete this part of the deliverable.
-- [x] **Router** - Routing between login and voting components.
+- [x] **Bundled using Vite** - I bundled the entire thing using Vite and the new React software.
+- [x] **Components** - I implemented each of the HTML and CSS components from before into the new React framework.
+- [x] **Router** - I routed my software between the previous source and the current hosting source.
 
 ## 🚀 React part 2: Reactivity
 
