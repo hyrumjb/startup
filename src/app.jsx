@@ -2,15 +2,15 @@ import React from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './app.css';
 import { BrowserRouter, NavLink, Route, Routes } from 'react-router-dom';
-import { Login } from './login/login.jsx';
-import { Finances } from './finances/finances.jsx';
-import { Shared } from './shared/shared.jsx';
-import { About } from './about/about.jsx';
+import { Login } from './login/login';
+import { Finances } from './finances/finances';
+import { Shared } from './shared/shared';
+import { About } from './about/about';
 
-export default function App() {
+ function App() {
   return (
     <BrowserRouter>
-        <body className="custom-bg">
+        <div className="custom-bg">
             <header className="container">
                 <div className="d-flex flex-wrap align-items-center justify-content-between py-3 mb-4 border-bottom">
                     <div className="col-md-6 d-flex align-items-center">
@@ -47,7 +47,7 @@ export default function App() {
                     <a className="text-reset" href="https://github.com/hyrumjb/startup">GitHub</a>
                 </div>
             </footer>
-        </body>
+        </div>
     </BrowserRouter>
   );
 }
@@ -55,3 +55,5 @@ export default function App() {
 function NotFound() {
     return <main className="container-fluid bg-secondary text-center">404: Return to sender. Address unknown.</main>;
 }
+
+export default App;
