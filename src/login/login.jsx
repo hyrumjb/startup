@@ -20,18 +20,6 @@ export function Login({ userName, authState, onAuthChange }) {
             }}
           />
         )}
-        {/* <form method="get" action="play.html">
-            <div class="input-group mb-3">
-                <span class="input-group-text">Username</span>
-                <input class="form-control" type="text" placeholder="example123" />
-            </div>
-            <div class="input-group mb-3">
-                <span class="input-group-text">Password</span>
-                <input class="form-control" type="password" placeholder="password456" />
-            </div>
-            <button type="submit" class="btn btn-primary">Login</button>
-            <button type="submit" class="btn btn-secondary">Create Account</button>
-        </form> */}
     </main>
   );
 }
