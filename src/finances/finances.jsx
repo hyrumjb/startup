@@ -1,28 +1,29 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './finances.css';
 
-export function Finances() {
-    const [username, setUsername] = useState('');
+export function Finances(props) {
+    const userName = props.userName;
+
     const [investments, setInvestments] = useState([]);
     const [newInvestment, setNewInvestment] = useState({ name: '', amount: '', quantity: '' });
 
     useEffect(() => {
-        if (username) {
-            const savedData = localStorage.getItem(username);
+        if (userName) {
+            const savedData = localStorage.getItem(userName);
             if (savedData) {
                 setInvestments(JSON.parse(savedData));
             } else {
                 setInvestments([]);
             }
         }
-    }, [username]);
+    }, [userName]);
 
     useEffect(() => {
-        if (username) {
-            localStorage.setItem(username, JSON.stringify(investments));
+        if (userName) {
+            localStorage.setItem(userName, JSON.stringify(investments));
         }
-    }, [investments, username]);
+    }, [investments, userName]);
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;
@@ -39,7 +40,7 @@ export function Finances() {
         }
     };
 
-    const editInvestemnt = (id, field, value) => {
+    const editInvestment = (id, field, value) => {
         setInvestments(
             investments.map((investment) =>
                 investment.id === id ? { ...investment, [field]: value } : investment
@@ -50,14 +51,7 @@ export function Finances() {
     return (
         <main className="bg-secondary">
             <div className="container">
-                <div className="player-name">
-                    <input
-                        type="text"
-                        value={username}
-                        onChange={(e) => setUsername(e.target.value)}
-                        placeholder="Enter username to view/save investments"
-                    />
-                </div>
+                <h3>{userName}</h3>
                 <section className="investments">
                     <h3 className="top-head">Current Investments</h3>
                     <div className="card-group">
@@ -85,7 +79,7 @@ export function Finances() {
                     </div>
                 </section>
                 <section className="add-investments">
-                    <h3>Add Investmnet</h3>
+                    <h3>Add Investment</h3>
                     <div className="inputs">
                         <input
                             type="text"
@@ -95,14 +89,14 @@ export function Finances() {
                             onChange={handleInputChange}
                         />
                         <input
-                            type="text"
+                            type="number"
                             name="amount"
                             placeholder="Amount"
                             value={newInvestment.amount}
                             onChange={handleInputChange}
                         />
                         <input
-                            type="text"
+                            type="number"
                             name="quantity"
                             placeholder="Quantity"
                             value={newInvestment.quantity}

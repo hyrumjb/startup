@@ -2,17 +2,18 @@ import React, { useState, useEffect } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './shared.css';
 
-export function Shared() {
-    const [username, setUsername] = useState('');
+export function Shared(props) {
+    const userName = props.userName;
+
     const [sharedInvestments, setSharedInvestments] = useState([]);
     const [newShare, setNewShare] = useState({ investment: '', recipient: ''});
 
     useEffect(() => {
-        if (username) {
-            const sharedDate = localStorage.getItem('shared_${username}');
+        if (userName) {
+            const sharedDate = localStorage.getItem(`shared_${userName}`);
             setSharedInvestments(sharedData ? JSON.parse(sharedData) : []);
         }
-    }, [username]);
+    }, [userName]);
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;
@@ -22,18 +23,18 @@ export function Shared() {
     const shareInvestment = () => {
         if (newShare.investment && newShare.recipient) {
             const recipient = newShare.recipient;
-            const sharedData = localStorage.getItem('shared_${recipient}');
+            const sharedData = localStorage.getItem(`shared_${recipient}`);
             const recipientShares = sharedData ? JSON.parse(sharedData) : [];
 
             const sharedInvestment = {
-                investment: newShare.investment;
-                sharedBy: username,
+                investment: newShare.investment,
+                sharedBy: userName,
                 id: Date.now()
             };
 
             recipientShares.push(sharedInvestment);
-            localStorage.setItem('shared_${recipient}', JSON.stringify(recipientShares));
-            alert('Investment shared with ${recipient}!');
+            localStorage.setItem(`shared_${recipient}`, JSON.stringify(recipientShares));
+            alert(`Investment shared with ${recipient}!`);
             setNewShare({ investment: '', recipient: '' });
         }
     };
@@ -41,14 +42,7 @@ export function Shared() {
     return (
         <main className="bg-secondary">
             <div className="container">
-                <div className="player-name">
-                    <input
-                        type="text"
-                        value={username}
-                        onChange={(e) => setUsername(e.target.value)}
-                        placeholder="Enter username to view shared investments"
-                    />
-                </div>
+                <h3>{userName}</h3>
                 <section className="investments">
                     <h3 className="top-head">Shared Investments</h3>
                     <div className="card-group">
@@ -71,7 +65,7 @@ export function Shared() {
                                 type="text"
                                 name="investment"
                                 placeholder="Berkshire Hathaway"
-                                value={newShare.investmnet}
+                                value={newShare.investment}
                                 onChange={handleInputChange}
                             />
                         </div>
