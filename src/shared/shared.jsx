@@ -1,68 +1,94 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './shared.css';
 
 export function Shared() {
-  return (
-    <main class="bg-secondary">
-        <div class="container">
-            <div class="player-name">Username</div>
-            <section class="investments">
-                <h3 class="top-head">Shared Investments</h3>
-                <div class="card-group">
-                    <div class="card">
-                        <div class="card-header">@elonmusk</div>
-                        <div class="card-body">
-                            <h5 class="card-title">Solana</h5>
-                            <p class="card-text">$43.20</p>
-                            <small class="text-muted">4.52</small>
-                        </div>
-                        <div class="card-footer">
-                            <a href="shared.html" class="btn btn-primary">Share</a>
-                            <a href="shared.html" class="btn btn-primary me-2">Edit</a>
-                        </div>
-                    </div>
-                    <div class="card">
-                        <div class="card-header">@realdonald</div>
-                        <div class="card-body">
-                            <h5 class="card-title">Nvidia</h5>
-                            <p class="card-text">$8,492.75</p>
-                            <small class="text-muted">16.33</small>
-                        </div>
-                        <div class="card-footer">
-                            <a href="shared.html" class="btn btn-primary">Share</a>
-                            <a href="shared.html" class="btn btn-primary me-2">Edit</a>
-                        </div>
-                    </div>
-                    <div class="card">
-                        <div class="card-header">@satoshi</div>
-                        <div class="card-body">
-                            <h5 class="card-title">Sui</h5>
-                            <p class="card-text">$67.45</p>
-                            <small class="text-muted">31.03</small>
-                        </div>
-                        <div class="card-footer">
-                            <a href="shared.html" class="btn btn-primary">Share</a>
-                            <a href="shared.html" class="btn btn-primary me-2">Edit</a>
-                        </div>
-                    </div>
+    const [username, setUsername] = useState('');
+    const [sharedInvestments, setSharedInvestments] = useState([]);
+    const [newShare, setNewShare] = useState({ investment: '', recipient: ''});
+
+    useEffect(() => {
+        if (username) {
+            const sharedDate = localStorage.getItem('shared_${username}');
+            setSharedInvestments(sharedData ? JSON.parse(sharedData) : []);
+        }
+    }, [username]);
+
+    const handleInputChange = (e) => {
+        const { name, value } = e.target;
+        setNewShare({ ...newShare, [name]: value });
+    };
+
+    const shareInvestment = () => {
+        if (newShare.investment && newShare.recipient) {
+            const recipient = newShare.recipient;
+            const sharedData = localStorage.getItem('shared_${recipient}');
+            const recipientShares = sharedData ? JSON.parse(sharedData) : [];
+
+            const sharedInvestment = {
+                investment: newShare.investment;
+                sharedBy: username,
+                id: Date.now()
+            };
+
+            recipientShares.push(sharedInvestment);
+            localStorage.setItem('shared_${recipient}', JSON.stringify(recipientShares));
+            alert('Investment shared with ${recipient}!');
+            setNewShare({ investment: '', recipient: '' });
+        }
+    };
+
+    return (
+        <main className="bg-secondary">
+            <div className="container">
+                <div className="player-name">
+                    <input
+                        type="text"
+                        value={username}
+                        onChange={(e) => setUsername(e.target.value)}
+                        placeholder="Enter username to view shared investments"
+                    />
                 </div>
-            </section>
-            <section class="share-investments">
-                <h3>Share Investment</h3>
-                <div class="inputs">
-                    <div>
-                        <span>Investment  </span>
-                        <input type="text" placeholder="Berkshire Hathaway" />
+                <section className="investments">
+                    <h3 className="top-head">Shared Investments</h3>
+                    <div className="card-group">
+                        {sharedInvestments.map((investment, index) => (
+                            <div className="card" key={index}>
+                                <div className="card-header">@{investment.sharedBy}</div>
+                                <div className="card-body">
+                                    <h5 className="card-title">{investment.investment}</h5>
+                                </div>
+                            </div>
+                        ))}
                     </div>
-                    <div>
-                        <span>User  </span>
-                        <input type="text" placeholder="jackdorsey" />
+                </section>
+                <section className="share-investments">
+                    <h3>Share Investment</h3>
+                    <div className="inputs">
+                        <div>
+                            <span>Investment</span>
+                            <input
+                                type="text"
+                                name="investment"
+                                placeholder="Berkshire Hathaway"
+                                value={newShare.investmnet}
+                                onChange={handleInputChange}
+                            />
+                        </div>
+                        <div>
+                            <span>User</span>
+                            <input
+                                type="text"
+                                name="recipient"
+                                placeholder="jackdorsey"
+                                value={newShare.recipient}
+                                onChange={handleInputChange}
+                            />
+                        </div>
                     </div>
-                </div>
-                <button class="btn btn-primary" type="submit">Share Now</button>
-            </section>
-        </div>
-    </main>
-  );
+                    <button className="btn btn-primary" onClick={shareInvestment}>Share Now</button>
+                </section>
+            </div>
+        </main>
+    );
 }
