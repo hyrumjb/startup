@@ -9,8 +9,16 @@ export function Authenticated(props) {
     const navigate = useNavigate();
 
     function logout() {
-        localStorage.removeItem('userName');
-        props.onLogout();
+        fetch(`/api/auth/logout`, {
+            method: 'delete',
+        })
+            .catch(() => {
+                // Logout failed
+            })
+            .finally(() => {
+                localStorage.removeItem('userName');
+                props.onLogout();
+            });
     }
 
     return (
