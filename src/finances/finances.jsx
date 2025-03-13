@@ -48,6 +48,16 @@ export function Finances(props) {
         );
     };
 
+    async function saveInvestment(investment) {
+        const newInvestment = { name: userName, amount: amount, quantity: quantity };
+
+        await fetch('/api/finances', {
+            method: 'POST',
+            headers: { 'content-type': 'application/json' },
+            body: JSON.stringify(newInvestment),
+        });
+    }
+
     return (
         <main className="bg-secondary">
             <div className="container">

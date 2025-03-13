@@ -10,8 +10,11 @@ export function Shared(props) {
 
     useEffect(() => {
         if (userName) {
-            const sharedDate = localStorage.getItem(`shared_${userName}`);
-            setSharedInvestments(sharedData ? JSON.parse(sharedData) : []);
+            fetch('/api/finances')
+                .then((response) => response.json())
+                .then((Investments) => {
+                    setSharedInvestments(investments);
+                });
         }
     }, [userName]);
 
