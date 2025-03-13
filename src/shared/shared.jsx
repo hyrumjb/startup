@@ -10,10 +10,18 @@ export function Shared(props) {
 
     useEffect(() => {
         if (userName) {
-            fetch('/api/finances')
+            fetch('/api/sharedInvestments', {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            })
                 .then((response) => response.json())
                 .then((Investments) => {
                     setSharedInvestments(investments);
+                })
+                .catch((error) => {
+                    console.error('Error fetching shared investments:', error);
                 });
         }
     }, [userName]);
@@ -25,20 +33,29 @@ export function Shared(props) {
 
     const shareInvestment = () => {
         if (newShare.investment && newShare.recipient) {
-            const recipient = newShare.recipient;
-            const sharedData = localStorage.getItem(`shared_${recipient}`);
-            const recipientShares = sharedData ? JSON.parse(sharedData) : [];
-
-            const sharedInvestment = {
-                investment: newShare.investment,
-                sharedBy: userName,
-                id: Date.now()
-            };
-
-            recipientShares.push(sharedInvestment);
-            localStorage.setItem(`shared_${recipient}`, JSON.stringify(recipientShares));
-            alert(`Investment shared with ${recipient}!`);
-            setNewShare({ investment: '', recipient: '' });
+            fetch('/api/shareInvestment', {
+                method: 'POST',
+                body: JSON.stringify({
+                    investment: newShare.investment,
+                    recipient: newShare.recipient,
+                }),
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            })
+                .then((response) => response.json())
+                .then((data) => {
+                    if (data.msg === 'Investment shared successfully!') {
+                        alert(`Investment shared with ${newShare.recipient}!`);
+                        setNewShare({ investment: '', recipient: '' });
+                    } else {
+                        alert('Failed to share investment.');
+                    }
+                })
+                .catch((error) => {
+                    console.error('Error sharing investment:', error);
+                    alert('Error sharing investment.');
+                });
         }
     };
 
@@ -83,7 +100,7 @@ export function Shared(props) {
                             />
                         </div>
                     </div>
-                    <button className="btn btn-primary" onClick={shareInvestment}>Share Now</button>
+                    <button className="btn btn-primary" onClick={shareInvestment} disabled={!newShare.investment || !newShare.recipient}>Share Now</button>
                 </section>
             </div>
         </main>
