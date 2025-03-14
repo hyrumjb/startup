@@ -37,6 +37,7 @@ export function Shared(props) {
                 }
                 return response.json();
             })
+
             .then((data) => {
                 setBtcData(data);
                 setBtcLoading(false);
@@ -97,8 +98,8 @@ export function Shared(props) {
                                 <ul>
                                     <li>Rank: {btcData.rank}</li>
                                     <li>Type: {btcData.type}</li>
-                                    <li>Active: {btcData.is_active ? "Yes" : "No"}</li>
-                                    <li>Started at: {btcData.started_at}</li>
+                                    <li>First Data: {btcData.first_data_at}</li>
+                                    <li>Last Data: {btcData.last_data_at}</li>
                                 </ul>
                             </div>
                         </div>
@@ -118,7 +119,7 @@ export function Shared(props) {
                         ))}
                     </div>
                 </section>
-                
+
                 <section className="share-investments">
                     <h3>Share Investment</h3>
                     <div className="inputs">
