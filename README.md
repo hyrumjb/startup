@@ -88,11 +88,11 @@ For this deliverable I did the following. I checked the box `[x]` and added a de
 
 For this deliverable I did the following. I checked the box `[x]` and added a description for things I completed.
 
-- [ ] **Node.js/Express HTTP service** - I did not complete this part of the deliverable.
-- [ ] **Static middleware for frontend** - I did not complete this part of the deliverable.
-- [ ] **Calls to third party endpoints** - I did not complete this part of the deliverable.
-- [ ] **Backend service endpoints** - I did not complete this part of the deliverable.
-- [ ] **Frontend calls service endpoints** - I did not complete this part of the deliverable.
+- [X] **Node.js/Express HTTP service** - I created a Node.js server to store all my information.
+- [X] **Static middleware for frontend** - I incorporated middleware into my service module and my index.js file.
+- [X] **Calls to third party endpoints** - I incorporated a third party endpoint to pull Bitcoin information.
+- [X] **Backend service endpoints** - I build backend server endpoints that store a user's financial information.
+- [X] **Frontend calls service endpoints** - I included frontend calls that access saved user information and their individual saved financial information.
 
 ## 🚀 DB/Login deliverable
 
