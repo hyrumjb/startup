@@ -84,15 +84,18 @@ apiRouter.post('/shareInvestment', verifyAuth, async (req, res) => {
     res.status(200).send({ msg: 'Investment shared successfully!' });
 });
 
+let sharedInvestmentsStore = {};
+
 function saveSharedInvestment(sharedBy, recipient, investment) {
+    if (!sharedInvestmentsStore[recipient]) {
+        sharedInvestmentsStore[recipient] = [];
+    }
     const sharedInvestment = { investment, sharedBy, id: Date.now() };
+    sharedInvestmentsStore[recipient].push(sharedInvestment);
+}
 
-    const recipientShares = localStorage.getItem(`shared_${recipient}`);
-    const updatedShares = recipientShares ? JSON.parse(recipientShares) : [];
-
-    updatedShares.push(sharedInvestment);
-
-    localStorage.setItem(`shared_${recipient}`, JSON.stringify(updatedShares));
+function getUserSharedInvestments(userName) {
+    return sharedInvestmentsStore[userName] || [];
 }
 
 apiRouter.get('/sharedInvestments', verifyAuth, async (req, res) => {
@@ -105,11 +108,6 @@ apiRouter.get('/sharedInvestments', verifyAuth, async (req, res) => {
     const recipientShares = getUserSharedInvestments(user.name);
     res.json(recipientShares);
 });
-
-function getUserSharedInvestments(userName) {
-    const sharedData = localStorage.getItem(`shared_${userName}`);
-    return sharedData ? JSON.parse(sharedData) : [];
-}
 
 app.use(function (err, req, res, next) {
     res.status(500).send({ type: err.name, message: err.message });
@@ -145,7 +143,7 @@ async function findUser(field, value) {
 
 function setAuthCookie(res, authToken) {
     res.cookie(authCookieName, authToken, {
-        secure: true,
+        secure: false,
         httpOnly: true,
         sameSite: 'strict',
     });

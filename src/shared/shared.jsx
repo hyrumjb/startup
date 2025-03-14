@@ -7,6 +7,9 @@ export function Shared(props) {
 
     const [sharedInvestments, setSharedInvestments] = useState([]);
     const [newShare, setNewShare] = useState({ investment: '', recipient: ''});
+    const [btcData, setBtcData] = useState(null);
+    const [btcLoading, setBtcLoading] = useState(null);
+    const [btcError, setBtcError] = useState(null);
 
     useEffect(() => {
         if (userName) {
@@ -25,6 +28,24 @@ export function Shared(props) {
                 });
         }
     }, [userName]);
+
+    useEffect(() => {
+        fetch("https://api.coinpaprika.com/v1/coins/btc-bitcoin")
+            .then((response) => {
+                if (!response.ok) {
+                    throw new Error("Network response was not ok");
+                }
+                return response.json();
+            })
+            .then((data) => {
+                setBtcData(data);
+                setBtcLoading(false);
+            })
+            .catch((error) => {
+                setBtcError(error);
+                setBtcLoading(false);
+            });
+    }, []);
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;
@@ -63,6 +84,27 @@ export function Shared(props) {
         <main className="bg-secondary">
             <div className="container">
                 <h3>{userName}</h3>
+
+                <section className="bitcoin-data">
+                    <h3>Bitcoin Info</h3>
+                    {btcLoading && <p>Loading Bitcoin data...</p>}
+                    {btcError && <p>Error: {btcError.message}</p>}
+                    {btcData && (
+                        <div className="card">
+                            <div className="card-body">
+                                <h5 className="card-title">{btcData.name} ({btcData.symbol})</h5>
+                                <p>{btcData.description}</p>
+                                <ul>
+                                    <li>Rank: {btcData.rank}</li>
+                                    <li>Type: {btcData.type}</li>
+                                    <li>Active: {btcData.is_active ? "Yes" : "No"}</li>
+                                    <li>Started at: {btcData.started_at}</li>
+                                </ul>
+                            </div>
+                        </div>
+                    )}
+                </section>
+
                 <section className="investments">
                     <h3 className="top-head">Shared Investments</h3>
                     <div className="card-group">
@@ -76,11 +118,12 @@ export function Shared(props) {
                         ))}
                     </div>
                 </section>
+                
                 <section className="share-investments">
                     <h3>Share Investment</h3>
                     <div className="inputs">
                         <div>
-                            <span>Investment</span>
+                            <span>Investment: </span>
                             <input
                                 type="text"
                                 name="investment"
@@ -90,7 +133,7 @@ export function Shared(props) {
                             />
                         </div>
                         <div>
-                            <span>User</span>
+                            <span>User: </span>
                             <input
                                 type="text"
                                 name="recipient"
