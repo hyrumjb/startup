@@ -25,3 +25,15 @@ main {
     color: white;
     text-align: center;
 }
+
+.form-group label {
+    display: block;
+    margin-bottom: 8px;
+}
+
+.form-group input {
+    display: block;
+    width: 100%;
+    padding: 8px;
+    margin-bottom: 12px;
+}

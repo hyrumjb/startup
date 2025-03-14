@@ -6,7 +6,7 @@ export function Finances(props) {
     const userName = props.userName;
 
     const [investments, setInvestments] = useState([]);
-    const [newInvestment, setNewInvestment] = useState({ name: '', amount: '', quantity: '' });
+    const [newInvestment, setNewInvestment] = useState({ name: '', quantity: '', price: '' });
 
     useEffect(() => {
         if (userName) {
@@ -30,13 +30,19 @@ export function Finances(props) {
         setNewInvestment({ ...newInvestment, [name]: value });
     };
 
-    const addInvestment = () => {
-        if (newInvestment.name && newInvestment.amount && newInvestment.quantity) {
-            setInvestments([
-                ...investments,
-                { id: Date.now(), ...newInvestment, amount: parseFloat(newInvestment.amount), quantity: parseFloat(newInvestment.quantity) }
-            ]);
-            setNewInvestment({ name: '', amount: '', quantity: ''})
+    const addInvestment = async () => {
+        if (newInvestment.name && newInvestment.quantity && newInvestment.price) {
+            const newInvestmentData = {
+                id: Date.now(),
+                ...newInvestment,
+                price: parseFloat(newInvestment.price),
+                quantity: parseFloat(newInvestment.quantity)
+            };
+
+            setInvestments([...investments, newInvestmentData]);
+            setNewInvestment({ name: '', quantity: '', price: ''});
+
+            await saveInvestment(newInvestmentData);
         }
     };
 
@@ -49,7 +55,7 @@ export function Finances(props) {
     };
 
     async function saveInvestment(investment) {
-        const newInvestment = { name: userName, amount: amount, quantity: quantity };
+        const newInvestment = { name: userName, quantity: quantity, price: price };
 
         await fetch('/api/finances', {
             method: 'POST',
@@ -68,21 +74,30 @@ export function Finances(props) {
                         {investments.map((investment) => (
                             <div className="card" key={investment.id}>
                                 <div className="card-body">
-                                    <input
-                                        type="text"
-                                        value={investment.name}
-                                        onChange={(e) => editInvestment(investment.id, 'name', e.target.value)}
-                                    />
-                                    <input
-                                        type="number"
-                                        value={investment.amount}
-                                        onChange={(e) => editInvestment(investment.id, 'amount', parseFloat(e.target.value))}
-                                    />
-                                    <input
-                                        type="number"
-                                        value={investment.quantity}
-                                        onChange={(e) => editInvestment(investment.id, 'quantity', parseFloat(e.target.value))}
-                                    />
+                                    <div className="form-group">
+                                        <label htmlFor={`name-${investment.id}`}>Investment Name:</label>
+                                        <input
+                                            type="text"
+                                            value={investment.name}
+                                            onChange={(e) => editInvestment(investment.id, 'name', e.target.value)}
+                                        />
+                                    </div>
+                                    <div className="form-group">
+                                        <label htmlFor={`quantity-${investment.id}`}>Quantity:</label>
+                                        <input
+                                            type="number"
+                                            value={investment.quantity}
+                                            onChange={(e) => editInvestment(investment.id, 'quantity', parseFloat(e.target.value))}
+                                        />
+                                    </div>
+                                    <div className="form-group">
+                                        <label htmlFor={`price-${investment.id}`}>Price:</label>
+                                        <input
+                                            type="number"
+                                            value={investment.price}
+                                            onChange={(e) => editInvestment(investment.id, 'price', parseFloat(e.target.value))}
+                                        />
+                                    </div>
                                 </div>
                             </div>
                         ))}
@@ -100,16 +115,16 @@ export function Finances(props) {
                         />
                         <input
                             type="number"
-                            name="amount"
-                            placeholder="Amount"
-                            value={newInvestment.amount}
+                            name="quantity"
+                            placeholder="Quantity"
+                            value={newInvestment.quantity}
                             onChange={handleInputChange}
                         />
                         <input
                             type="number"
-                            name="quantity"
-                            placeholder="Quantity"
-                            value={newInvestment.quantity}
+                            name="price"
+                            placeholder="Price"
+                            value={newInvestment.price}
                             onChange={handleInputChange}
                         />
                     </div>
