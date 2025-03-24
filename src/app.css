@@ -17,7 +17,7 @@ html, body {
 }
 
 .custom-bg {
-    background-color: rgb(184, 184, 239);
+    background-color: rgb(245, 255, 255);
     color: lightgray;
     min-height: 100vh;
 }
@@ -44,8 +44,9 @@ main {
 
 footer {
     flex: 0 0 30px;
-    position: relative;
+    position: fixed;
     width: 100%;
+    bottom: 0;
     margin-bottom: 0;
     padding-bottom: 0;
     overflow-x: hidden;

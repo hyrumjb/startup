@@ -5,7 +5,7 @@ const url = `mongodb+srv://${config.userName}:${config.password}@${config.hostna
 const client = new MongoClient(url);
 const db = client.db('startup');
 const userCollection = db.collection('user')
-const financesCollection = db.collection('finances');
+const investmentsCollection = db.collection('investments');
 const sharedInvestmentsCollection = db.collection('sharedInvestments');
 
 (async function testConnection() {
@@ -34,17 +34,17 @@ async function updateUser(user) {
     await userCollection.updateOne({ name: user.name }, { $set: user });
 }
 
-async function addFinances(finances) {
-    return financesCollection.insertOne(finances);
+async function addInvestment(investments) {
+    return investmentsCollection.insertOne(investments);
 }
 
 const { ObjectId } = require('mongodb');
 
-async function getUserFinances(userId) {
+async function getUserInvestments(userId) {
     if (!ObjectId.isValid(userId)) {
         throw new Error('Invalid userId.');
     }
-    return financesCollection.find({ userId: new ObjectId(userId) }).toArray();
+    return investmentsCollection.find({ userId: new ObjectId(userId) }).toArray();
 }
 
 async function addSharedInvestment(investment) {
@@ -60,8 +60,8 @@ module.exports = {
     getUserByToken,
     addUser,
     updateUser,
-    addFinances,
-    getUserFinances,
+    addInvestment,
+    getUserInvestments,
     addSharedInvestment,
     getSharedInvestments,
 };

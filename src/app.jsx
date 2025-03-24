@@ -20,10 +20,10 @@ function App() {
                 <header className="container">
                     <div className="d-flex flex-wrap align-items-center justify-content-between py-3 mb-4 border-bottom">
                         <div className="col-md-6 d-flex align-items-center">
-                            <h1 className="mb-0 text-light">myDinero</h1>
+                            <h1 className="mb-0 text-black">myDinero</h1>
                         </div>
                         <div className="col-md-6 text-center d-none d-md-block">
-                            <h6 className="mb-0 text-light">~ the simple money interface ~</h6>
+                            <h6 className="mb-0 text-black">$ € £ ¥ ₺ ₱</h6>
                         </div>
                         <nav className="navbar sticky-top navbar-dark">
                             <menu className="nav col-12 col-md-auto mb-2 justify-content-center mb-md-0">

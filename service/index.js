@@ -58,14 +58,14 @@ const verifyAuth = async (req, res, next) => {
     }
 };
 
-apiRouter.get('/finances', verifyAuth, async (_req, res) => {
-    const investments = await DB.getUserFinances(req.user._id);
+apiRouter.get('/investments', verifyAuth, async (_req, res) => {
+    const investments = await DB.getUserInvestments(req.user._id);
     res.send(investments)
 });
 
-apiRouter.post('/finances', verifyAuth, async (req, res) => {
+apiRouter.post('/investments', verifyAuth, async (req, res) => {
     const investment = { ...req.body, userId: req.user._id };
-    await DB.addFinances(investment);
+    await DB.addInvestment(investment);
     res.send({ msg: 'Investment added successfully!' });
 });
 
