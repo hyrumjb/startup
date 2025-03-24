@@ -15,7 +15,7 @@ app.use(express.static('public'));
 var apiRouter = express.Router();
 app.use(`/api`, apiRouter);
 
-apiRouter.get('/api/users/:userName', async (req, res) => {
+apiRouter.get('/users/:userName', async (req, res) => {
     const { userName } = req.params;
     try {
         const user = await getUser(userName);
@@ -73,7 +73,7 @@ const verifyAuth = async (req, res, next) => {
     }
 };
 
-apiRouter.get('/investments', verifyAuth, async (_req, res) => {
+apiRouter.get('/investments', verifyAuth, async (req, res) => {
     const investments = await DB.getUserInvestments(req.user._id);
     res.send(investments)
 });
@@ -109,6 +109,19 @@ apiRouter.post('/shareInvestment', verifyAuth, async (req, res) => {
 apiRouter.get('/sharedInvestments', verifyAuth, async (req, res) => {
     const sharedInvestments = await DB.getSharedInvestments(req.user.name);
     res.json(sharedInvestments);
+});
+
+apiRouter.get('/users/:userName', async (req, res) => {
+    try {
+        const user = await DB.getUserByUsername(req.params.userName);
+        if (!user) {
+            return res.status(404).send({ error: 'User not found' });
+        }
+        res.send(user);
+    } catch (error) {
+        console.error('Error fetching user by username:', error);
+        res.status(500).send({ error: 'Internal server error' });
+    }
 });
 
 app.use(function (err, req, res, next) {

@@ -10,11 +10,14 @@ export function Finances(props) {
     const [userId, setUserId] = useState(null);
 
     useEffect(() => {
-        if (userName) {
-            fetchUserId();
+        fetchUserId();
+    }, [userName]);
+
+    useEffect(() => {
+        if (userId) {
             fetchInvestments();
         }
-    }, [userName]);
+    }, [userId]);
 
     const fetchUserId = async () => {
         try {
@@ -30,9 +33,13 @@ export function Finances(props) {
 
     const fetchInvestments = async () => {
         try {
-            const response = await fetch(`/api/finances/${userName}`);
-            const data = await response.json();
-            setInvestments(data || []);
+            if (userId) {
+                const response = await fetch(`/api/investments/${userId}`);
+                const data = await response.json();
+                setInvestments(data || []);
+            } else {
+                console.error('User ID is not available');
+            }
         } catch (error) {
             console.error('Error fetching investments:', error);
         }
@@ -40,13 +47,13 @@ export function Finances(props) {
 
     const saveInvestment = async (investment) => {
         try {
-            await fetch('/api/finances', {
+            await fetch('/api/investments', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ userName, ...investment }),
+                body: JSON.stringify({ userId, ...investment }),
             });
         } catch (error) {
-            console.error('Error saving invesment:', error);
+            console.error('Error saving investment:', error);
         }
     };
 
@@ -58,16 +65,26 @@ export function Finances(props) {
     const addInvestment = async () => {
         if (newInvestment.name && newInvestment.quantity && newInvestment.price) {
             const newInvestmentData = {
-                id: Date.now(),
                 name: newInvestment.name,
                 price: parseFloat(newInvestment.price),
-                quantity: parseFloat(newInvestment.quantity)
+                quantity: parseFloat(newInvestment.quantity),
+                userId
             };
 
-            setInvestments([...investments, newInvestmentData]);
-            setNewInvestment({ name: '', quantity: '', price: ''});
+            try {
+                const response = await fetch('/api/investments', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(newInvestmentData),
+                });
 
-            await saveInvestment(newInvestmentData);
+                const savedInvestment = await response.json();
+
+                setInvestments([...investments, savedInvestment]);
+                setNewInvestment({ name: '', quantity: '', price: '' });
+            } catch (error) {
+                console.error('Error adding investment:', error);
+            }
         }
     };
 

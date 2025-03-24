@@ -45,10 +45,17 @@ async function addInvestment(investment) {
 }
 
 async function getUserInvestments(userId) {
-    if (!ObjectId.isValid(userId)) {
-        throw new Error('Invalid userId.');
+    try {
+        const investments = await investmentsCollection.find({ userId: new ObjectId(userId) }).toArray();
+        return investments;
+    } catch (error) {
+        console.error('Error getting user investments:', error);
+        throw error;
     }
-    return await investmentsCollection.find({ userId: new ObjectId(userId) }).toArray();
+}
+
+async function getUserByUsername(userName) {
+    return await usersCollection.findOne({ userName });
 }
 
 async function addSharedInvestment(sharedInvestment) {
