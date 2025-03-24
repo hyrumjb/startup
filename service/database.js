@@ -1,4 +1,4 @@
-const { MongoClient } = require('mongodb');
+const { MongoClient, ObjectId } = require('mongodb');
 const config = require('./dbConfig.json');
 
 const url = `mongodb+srv://${config.userName}:${config.password}@${config.hostname}`;
@@ -22,8 +22,8 @@ function getUser(name) {
     return userCollection.findOne({ name: name });
 }
 
-function getUserByToken(token) {
-    return userCollection.findOne({ token: token });
+async function getUserByToken(token) {
+    return await userCollection.findOne({ token: token });
 }
 
 async function addUser(user) {
@@ -34,21 +34,31 @@ async function updateUser(user) {
     await userCollection.updateOne({ name: user.name }, { $set: user });
 }
 
-async function addInvestment(investments) {
-    return investmentsCollection.insertOne(investments);
+async function addInvestment(investment) {
+    const newInvestmnet = {
+        name: investment.name,
+        quantity: investment.quantity,
+        price: investment.price,
+        userId: new ObjectId(investment.userId),
+    };
+    await investmentsCollection.insertOne(newInvestment);
 }
-
-const { ObjectId } = require('mongodb');
 
 async function getUserInvestments(userId) {
     if (!ObjectId.isValid(userId)) {
         throw new Error('Invalid userId.');
     }
-    return investmentsCollection.find({ userId: new ObjectId(userId) }).toArray();
+    return await investmentsCollection.find({ userId: new ObjectId(userId) }).toArray();
 }
 
 async function addSharedInvestment(investment) {
-    return sharedInvestmentsCollection.insertOne(investment);
+    const newSharedInvestment = {
+        investment: new ObjectId(sharedInvestment.investment),
+        sharedBy: sharedInvestment.sharedBy,
+        recipient: sharedInvestment.recipient,
+        timestamp: new Date(),
+    };
+    await sharedInvestmentsCollection.insertOne(newSharedInvestment);
 }
 
 async function getSharedInvestments(userName) {

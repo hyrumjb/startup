@@ -64,7 +64,10 @@ apiRouter.get('/investments', verifyAuth, async (_req, res) => {
 });
 
 apiRouter.post('/investments', verifyAuth, async (req, res) => {
-    const investment = { ...req.body, userId: req.user._id };
+    const investment = { 
+        ...req.body,
+        userId: req.user._id
+    };
     await DB.addInvestment(investment);
     res.send({ msg: 'Investment added successfully!' });
 });
@@ -77,7 +80,12 @@ apiRouter.post('/shareInvestment', verifyAuth, async (req, res) => {
         return res.status(401).send({ msg: 'Recipient not found.' });
     }
 
-    const sharedInvestment = {investment, sharedBy: req.user.name, recipient: recipientUser.name, timestamp: Date.now() };
+    const sharedInvestment = {
+        investment, 
+        sharedBy: req.user.name, 
+        recipient: recipientUser.name, 
+        timestamp: Date.now()
+    };
     await DB.addSharedInvestment(sharedInvestment);
 
     res.status(200).send({ msg: 'Investment shared successfully!' });
