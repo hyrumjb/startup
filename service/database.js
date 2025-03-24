@@ -43,7 +43,7 @@ async function getUserFinances(userId) {
     if (!ObjectId.isValid(userId)) {
         throw new Error('Invalid userId.');
     }
-    return finances.Collection.find({ userId: new ObjectId(userId) }).toArray();
+    return financesCollection.find({ userId: new ObjectId(userId) }).toArray();
 }
 
 module.exports = {
