@@ -20,7 +20,7 @@ export function About(props) {
                 </p>
                 <p>
                     It's not built for professional day traders or fancy stock brokers.
-                    It's not built for incredibly rich people who need to check their wealth to feel valued.
+                    It's not built for incredibly wealthy people who need to check their wealth to feel valued.
                     It's not built for people who can already afford any other financial tools they could need.
                     It's not for the 1% of the 1%, the elites who seem to control all finance.
                 </p>

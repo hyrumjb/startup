@@ -98,11 +98,11 @@ For this deliverable I did the following. I checked the box `[x]` and added a de
 
 For this deliverable I did the following. I checked the box `[x]` and added a description for things I completed.
 
-- [ ] **User registration** - I did not complete this part of the deliverable.
-- [ ] **User login and logout** - I did not complete this part of the deliverable.
-- [ ] **Stores data in MongoDB** - I did not complete this part of the deliverable.
-- [ ] **Stores credentials in MongoDB** - I did not complete this part of the deliverable.
-- [ ] **Restricts functionality based on authentication** - I did not complete this part of the deliverable.
+- [X] **User registration** - I made sure user information is saved so they can only click login if their information is saved to the database.
+- [X] **User login and logout** - I incorporated tools to allow users to login and logout based on their MongoDB information
+- [X] **Stores data in MongoDB** - I saved all the data in an array on MongoDB.
+- [X] **Stores credentials in MongoDB** - All user credentials are properly saved in MongoDB.
+- [X] **Restricts functionality based on authentication** - I made sure that only the users that are properly logged in can access all parts of the service.
 
 ## 🚀 WebSocket deliverable
 

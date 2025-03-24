@@ -6,13 +6,14 @@ const client = new MongoClient(url);
 const db = client.db('startup');
 const userCollection = db.collection('user')
 const financesCollection = db.collection('finances');
+const sharedInvestmentsCollection = db.collection('sharedInvestments');
 
 (async function testConnection() {
     try {
         await db.command({ ping: 1 });
         console.log(`Connect to database`);
     } catch (ex) {
-        console.log(`Unable to connect to database with ${url} because ${ex.message}`);
+        console.log(`Unable to connect to database because ${ex.message}`);
         process.exit(1);
     }
 })();
@@ -46,6 +47,14 @@ async function getUserFinances(userId) {
     return financesCollection.find({ userId: new ObjectId(userId) }).toArray();
 }
 
+async function addSharedInvestment(investment) {
+    return sharedInvestmentsCollection.insertOne(investment);
+}
+
+async function getSharedInvestments(userName) {
+    return sharedInvestmentsCollection.find({ recipient: userName }).toArray();
+}
+
 module.exports = {
     getUser,
     getUserByToken,
@@ -53,4 +62,6 @@ module.exports = {
     updateUser,
     addFinances,
     getUserFinances,
+    addSharedInvestment,
+    getSharedInvestments,
 };
