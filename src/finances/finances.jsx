@@ -7,23 +7,48 @@ export function Finances(props) {
 
     const [investments, setInvestments] = useState([]);
     const [newInvestment, setNewInvestment] = useState({ name: '', quantity: '', price: '' });
+    const [userId, setUserId] = useState(null);
 
     useEffect(() => {
         if (userName) {
-            const savedData = localStorage.getItem(userName);
-            if (savedData) {
-                setInvestments(JSON.parse(savedData));
-            } else {
-                setInvestments([]);
-            }
+            fetchUserId();
+            fetchInvestments();
         }
     }, [userName]);
 
-    useEffect(() => {
-        if (userName) {
-            localStorage.setItem(userName, JSON.stringify(investments));
+    const fetchUserId = async () => {
+        try {
+            const response = await fetch(`/api/users/${userName}`);
+            const user = await response.json();
+            if (user) {
+                setUserId(user._id);
+            }
+        } catch (error) {
+            console.error('Error fetching user ID:', error);
         }
-    }, [investments, userName]);
+    };
+
+    const fetchInvestments = async () => {
+        try {
+            const response = await fetch(`/api/finances/${userName}`);
+            const data = await response.json();
+            setInvestments(data || []);
+        } catch (error) {
+            console.error('Error fetching investments:', error);
+        }
+    };
+
+    const saveInvestment = async (investment) => {
+        try {
+            await fetch('/api/finances', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ userName, ...investment }),
+            });
+        } catch (error) {
+            console.error('Error saving invesment:', error);
+        }
+    };
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;
@@ -34,7 +59,7 @@ export function Finances(props) {
         if (newInvestment.name && newInvestment.quantity && newInvestment.price) {
             const newInvestmentData = {
                 id: Date.now(),
-                ...newInvestment,
+                name: newInvestment.name,
                 price: parseFloat(newInvestment.price),
                 quantity: parseFloat(newInvestment.quantity)
             };
@@ -53,16 +78,6 @@ export function Finances(props) {
             )
         );
     };
-
-    async function saveInvestment(investment) {
-        const newInvestment = { name: userName, quantity: quantity, price: price };
-
-        await fetch('/api/finances', {
-            method: 'POST',
-            headers: { 'content-type': 'application/json' },
-            body: JSON.stringify(newInvestment),
-        });
-    }
 
     return (
         <main className="bg-secondary">

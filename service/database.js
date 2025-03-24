@@ -35,7 +35,7 @@ async function updateUser(user) {
 }
 
 async function addInvestment(investment) {
-    const newInvestmnet = {
+    const newInvestment = {
         name: investment.name,
         quantity: investment.quantity,
         price: investment.price,
@@ -51,7 +51,7 @@ async function getUserInvestments(userId) {
     return await investmentsCollection.find({ userId: new ObjectId(userId) }).toArray();
 }
 
-async function addSharedInvestment(investment) {
+async function addSharedInvestment(sharedInvestment) {
     const newSharedInvestment = {
         investment: new ObjectId(sharedInvestment.investment),
         sharedBy: sharedInvestment.sharedBy,

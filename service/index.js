@@ -15,6 +15,21 @@ app.use(express.static('public'));
 var apiRouter = express.Router();
 app.use(`/api`, apiRouter);
 
+apiRouter.get('/api/users/:userName', async (req, res) => {
+    const { userName } = req.params;
+    try {
+        const user = await getUser(userName);
+        if (user) {
+            res.json(user);
+        } else {
+            res.status(404).json ({ error: 'User not found' });
+        }
+    } catch (error) {
+        console.error('Error getting user:', error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+});
+
 apiRouter.post('/auth/create', async (req, res) => {
     if (await findUser('name', req.body.name)) {
         res.status(409).send({ msg: 'Existing user' });
