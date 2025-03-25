@@ -4,7 +4,7 @@ const config = require('./dbConfig.json');
 const url = `mongodb+srv://${config.userName}:${config.password}@${config.hostname}`;
 const client = new MongoClient(url);
 const db = client.db('startup');
-const userCollection = db.collection('user')
+const userCollection = db.collection('user');
 const investmentsCollection = db.collection('investments');
 const sharedInvestmentsCollection = db.collection('sharedInvestments');
 
@@ -28,31 +28,39 @@ async function getUserByToken(token) {
 }
 
 async function addUser(user) {
-    await userCollection.insertOne(user);
+    const result = await userCollection.insertOne(user);
+    return {
+        _id: result.insertedId,
+        name: user.name,
+        token: user.token
+    };
 }
 
 async function updateUser(user) {
-    await userCollection.updateOne({ name: user.name }, { $set: user });
+    await userCollection.updateOne(
+        { _id: user._id }, 
+        { $set: { token: user.token } }
+    );
 }
 
 async function addInvestment(investment) {
-    const newInvestment = {
-        name: investment.name,
-        quantity: investment.quantity,
-        price: investment.price,
-        userId: investment.userId,
-        createdAt: new Date()
-    };
-    const results = await investmentsCollection.insertOne(newInvestment);
+    const results = await investmentsCollection.insertOne(investment);
     return {
         _id: result.insertedId,
-        ...newInvestment
+        ...investment
     };
 }
 
-async function getUserInvestments(userId) {
+async function getUserInvestments(token) {
+    if (!token) {
+        throw new Error('Unauthorized: No token provided');
+    }
+    const user = await getUserByToken(token);
+    if (!user) {
+        throw new Error('Unauthorized: Invalid token');
+    }
     try {
-        return await investmentsCollection.find({ userId: new ObjectId(userId) }).toArray();
+        return await investmentsCollection.find({ userId: new ObjectId(user._id) }).toArray();
     } catch (error) {
         console.error('Error getting user investments:', error);
         throw error;

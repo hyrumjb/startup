@@ -17,19 +17,25 @@ export function Unauthenticated(props) {
     }
 
     async function loginOrCreate(endpoint) {
-        const response = await fetch(endpoint, {
-            method: 'post',
-            body: JSON.stringify({ name: userName, password: password }),
-            headers: {
-                'Content-type': 'application/json; charset=UTF-8',
-            },
-        });
-        if (response?.status === 200) {
-            localStorage.setItem('userName', userName);
-            props.onLogin(userName);
-        } else {
-            const body = await response.json();
-            setDisplayError(`⚠ Error: ${body.msg}`);
+        try {
+            const response = await fetch(endpoint, {
+                method: 'post',
+                body: JSON.stringify({ name: userName, password: password }),
+                headers: {
+                    'Content-type': 'application/json; charset=UTF-8',
+                },
+                credentials: 'include'
+            });
+            if (response?.ok) {
+                const body = await response.json();
+                localStorage.setItem('userName', userName);
+                props.onLogin(userName);
+            } else {
+                const body = await response.json();
+                setDisplayError(`⚠ Error: ${body.msg}`);
+            }
+        } catch (error) {
+            setDisplayError(`Network error: ${error.message}`);
         }
     }
 

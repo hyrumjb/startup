@@ -4,52 +4,30 @@ import './finances.css';
 
 export function Finances(props) {
     const userName = props.userName;
-
     const [investments, setInvestments] = useState([]);
     const [newInvestment, setNewInvestment] = useState({ name: '', quantity: '', price: '' });
-    const [userId, setUserId] = useState(null);
-    const [authToken, setAuthToken] = useState('');
 
     useEffect(() => {
-        const token = getCookie('token');
-        if (token) {
-            setAuthToken(token)
-            fetchUserId();
-        } else {
-            console.error('No auth token found');
-        }
-    }, [userName]);
+        fetchInvestments();
+    }, []);
 
-    useEffect(() => {
-        if (userId && authToken) {
-            fetchInvestments();
-        }
-    }, [userId, authToken]);
-
-    const fetchUserId = async () => {
-        try {
-            const response = await fetch(`/api/users/${userName}`);
-            const user = await response.json();
-            if (user) {
-                setUserId(user._id);
-            }
-        } catch (error) {
-            console.error('Error fetching user ID:', error);
-        }
-    };
 
     const fetchInvestments = async () => {
         try {
             const response = await fetch('/api/investments', {
-                headers: {
-                    'Authorization': `Bearer ${authToken}`,
-                    'Content-Type': 'application/json'
-                }
+                credentials: 'include'
             });
+
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.error || 'Failed to fetch investments');
+            } 
+
             const data = await response.json();
             setInvestments(data || []);
         } catch (error) {
             console.error('Error fetching investments:', error);
+            alert(error.message);
         }
     };
 
@@ -60,10 +38,6 @@ export function Finances(props) {
 
     const addInvestment = async () => {
         if (newInvestment.name && newInvestment.quantity && newInvestment.price) {
-            if (!userId) {
-                console.error("userId is null. Cannot add investment.");
-                return;
-            }
             try {
                 const response = await fetch('/api/investments', {
                     method: 'POST',
@@ -77,15 +51,16 @@ export function Finances(props) {
                         quantity: parseFloat(newInvestment.quantity),
                         userId
                     }),
+                    credentials: 'include'
                 });
 
-                if (!response.ok) throw new Error('Failed to save investment');
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    throw new Error('Failed to save investment');
+                }
 
-                const createdInvestment = await response.json();
-                setInvestments(prevInvestments => [...prevInvestments, {
-                    ...createdInvestment,
-                    _id: createdInvestment._id || Date.now().toString()
-                }]);
+                const responseData = await response.json();
+                setInvestments(prevInvestments => [...prevInvestments, responseData]);
                 setNewInvestment({ name: '', quantity: '', price: '' });
             } catch (error) {
                 console.error('Error adding investment:', error);
@@ -104,17 +79,12 @@ export function Finances(props) {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ [field]: value }),
+                credentials: 'include'
             });
         } catch (error) {
             console.error('Error updating investment:', error);
         }
     };
-
-    function getCookie(name) {
-        const value = `; ${document.cookie}`;
-        const parts = value.split(`; ${name}=`);
-        if (parts.length === 2) return parts.pop().split(';').shift();
-    }
 
     return (
         <main className="bg-secondary">

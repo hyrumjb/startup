@@ -6,17 +6,38 @@ import { Authenticated } from './authenticated';
 import { AuthState } from './authState';
 
 export function Login({ userName, authState, onAuthChange }) {
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const storedUserName = localStorage.getItem('userName');
+    const storedToken = localStorage.getItem('authToken');
+
+    if (storedUserName && storedToken) {
+      onAuthChange(storedUserName, AuthState.Authenticated);
+    } else {
+      onAuthChange (null, AuthState.Unauthenticated);
+      localStorage.removeItem('userName');
+      localStorage.removeItem('authToken');
+    }
+  }, [onAuthChange]);
+  
   return (
-    <main class="container-fluid bg-secondary text-center">
-        {authState !== AuthState.Unknown && <h1>Welcome to myDinero</h1>}
+    <main className="container-fluid bg-secondary text-center">
+        <h1>Welcome to myDinero</h1>
         {authState === AuthState.Authenticated && (
-          <Authenticated userName={userName} onLogout={() => onAuthChange(userName, AuthState.Unauthenticated)} />
+          <Authenticated userName={userName} onLogout={() => {
+            localStorage.removeItem('userName');
+            localStorage.removeItem('authToken');
+            onAuthChange(null, AuthState.Unauthenticated);
+            navigate('/');
+          }} />
         )}
         {authState === AuthState.Unauthenticated && (
           <Unauthenticated
             userName={userName}
             onLogin={(loginUserName) => {
               onAuthChange(loginUserName, AuthState.Authenticated);
+              navigate('/finances');
             }}
           />
         )}

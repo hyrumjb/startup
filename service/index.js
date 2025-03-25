@@ -2,6 +2,8 @@ const cookieParser = require('cookie-parser');
 const bcrypt = require('bcryptjs');
 const express = require('express');
 const uuid = require('uuid');
+const path = require('path');
+const { ObjectId } = require('mongodb');
 const app = express();
 const DB = require('./database.js')
 
@@ -10,19 +12,34 @@ const port = process.argv.length > 2 ? process.argv[2] : 3000;
 
 app.use(express.json());
 app.use(cookieParser());
-app.use(express.static('public'));
+
+app.use((req, res, next) => {
+    res.header('Access-Control-Allow-Origin', 'http://localhost:5173');
+    res.header('Access-Control-Allow-Credentials', 'true');
+    res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
+    next();
+});
+
+if (process.env.NODE_ENV === 'production') {
+    app.use(express.static(path.join(__dirname, '../dist')));
+} else {
+    app.use(express.static('public'));
+}
 
 var apiRouter = express.Router();
-app.use('/api', apiRouter);
+app.use(`/api`, apiRouter);
 
 apiRouter.get('/users/:userName', async (req, res) => {
     const { userName } = req.params;
     try {
         const user = await DB.getUser(userName);
         if (user) {
-            res.json(user);
+            res.json({
+                _id: user._id,
+                name: user.name
+            });
         } else {
-            res.status(404).json ({ error: 'User not found' });
+            res.status(404).json({ error: 'User not found' });
         }
     } catch (error) {
         console.error('Error getting user:', error);
@@ -31,50 +48,84 @@ apiRouter.get('/users/:userName', async (req, res) => {
 });
 
 apiRouter.post('/auth/create', async (req, res) => {
-    if (await findUser('name', req.body.name)) {
-        res.status(409).send({ msg: 'Existing user' });
-    } else {
-        const user = await createUser(req.body.name, req.body.password);
-        setAuthCookie(res, user.token);
-        res.json({ name: user.name });
+    try {
+        if (await findUser('name', req.body.name)) {
+            res.status(409).send({ msg: 'Existing user' });
+        } else {
+            const user = await createUser(req.body.name, req.body.password);
+            setAuthCookie(res, user.token);
+            res.json({ 
+                name: user.name,
+                _id: user._id
+            });
+        }
+    } catch (error) {
+        console.error('Error creating user:', error);
+        res.status(500).json({ error: 'Failed to create user' });
     }
 });
 
 apiRouter.post('/auth/login', async (req, res) => {
-    const user = await findUser('name', req.body.name);
-    if (user && await bcrypt.compare(req.body.password, user.password)) {
+    try {
+        const user = await findUser('name', req.body.name);
+        if (user && await bcrypt.compare(req.body.password, user.password)) {
             user.token = uuid.v4();
             await DB.updateUser(user);
             setAuthCookie(res, user.token);
-            res.json({ name: user.name });
-    } else {
-        res.status(401).json({ msg: 'Unauthorized' });
+            res.json({ 
+                name: user.name,
+                _id: user._id
+            });
+        } else {
+            res.status(401).json({ msg: 'Unauthorized' });
+        }
+    } catch (error) {
+        console.error('Error logging in:', error);
+        res.status(500).json({ error: 'Login failed' });
     }
 });
 
 apiRouter.delete('/auth/logout', async (req, res) => {
-    const user = await DB.getUserByToken(req.cookies[authCookieName]);
-    if (user) {
-        delete user.token;
-        await DB.updateUser(user);
+    try {
+        const user = await DB.getUserByToken(req.cookies[authCookieName]);
+        if (user) {
+            delete user.token;
+            await DB.updateUser(user);
+        }
+        res.clearCookie(authCookieName);
+        res.status(204).end();
+    } catch (error) {
+        console.error('Error logging out:', error);
+        res.status(500).json({ error: 'Logout failed' });
     }
-    res.clearCookie(authCookieName);
-    res.status(204).end();
 });
 
 const verifyAuth = async (req, res, next) => {
-    const user = await DB.getUserByToken(req.cookies[authCookieName]);
-    if (user) {
+    try {
+        const token = req.cookies[authCookieName];
+        if (!token) {
+            return res.status(401).json({ msg: 'No token provided' });
+        }
+        const user = await DB.getUserByToken(token);
+        if (!user) {
+            return res.status(401).json({ msg: 'Invalid token' });
+        }
         req.user = user;
         next();
-    } else {
-        res.status(401).json({ msg: 'Unauthorized' });
+    } catch (error) {
+        console.error('Auth verification error:', error);
+        res.status(401).json({ msg: 'Authentication failed' });
     }
 };
 
 apiRouter.get('/investments', verifyAuth, async (req, res) => {
-    const investments = await DB.getUserInvestments(req.user._id);
-    res.json(investments)
+    try {
+        const investments = await DB.getUserInvestments(req.user._id);
+        res.json(investments);
+    } catch (error) {
+        console.error('Error getting investments:', error);
+        res.status(500).json({ error: error.message });
+    }
 });
 
 apiRouter.post('/investments', verifyAuth, async (req, res) => {
@@ -83,15 +134,14 @@ apiRouter.post('/investments', verifyAuth, async (req, res) => {
             name: req.body.name,
             price: req.body.price,
             quantity: req.body.quantity,
-            userId: new ObjectId(req.body.userId)
+            userId: req.user._id,
+            createdAt: new Date()
         };
+        
         const result = await DB.addInvestment(investment);
-        res.status(201).json({
-            _id: result.insertedId,
-            ...investment
-        });
-
+        res.status(201).json(result);
     } catch (error) {
+        console.error('Error adding investment:', error);
         res.status(500).json({ error: error.message });
     }
 });
@@ -126,7 +176,11 @@ app.use(function (err, req, res, next) {
 });
 
 app.use((_req, res) => {
-    res.sendFile('index.html', { root: 'public' });
+    if (process.env.NODE_ENV === 'production') {
+        res.sendFile(path.join(__dirname, '../dist/index.html'));
+    } else {
+        res.sendFile('index.html', { root: 'public' });
+    }
 });
 
 async function createUser(name, password) {
@@ -156,9 +210,11 @@ async function findUser(field, value) {
 
 function setAuthCookie(res, authToken) {
     res.cookie(authCookieName, authToken, {
-        secure: true,
+        secure: process.env.NODE_ENV === 'production',
         httpOnly: true,
-        sameSite: 'strict',
+        sameSite: 'lax',
+        path: '/',
+        maxAge: 7 * 24 * 60 * 60 * 1000
     });
 }
 
