@@ -8,6 +8,7 @@ export function Finances(props) {
     const [investments, setInvestments] = useState([]);
     const [newInvestment, setNewInvestment] = useState({ name: '', quantity: '', price: '' });
     const [userId, setUserId] = useState(null);
+    const [authToken, setAuthToken] = useState('');
 
     useEffect(() => {
         fetchUserId();
@@ -33,27 +34,16 @@ export function Finances(props) {
 
     const fetchInvestments = async () => {
         try {
-            if (userId) {
-                const response = await fetch(`/api/investments/${userId}`);
-                const data = await response.json();
-                setInvestments(data || []);
-            } else {
-                console.error('User ID is not available');
-            }
+            const response = await fetch('/api/investments', {
+                headers: {
+                    'Authorization': `Bearer ${authToken}`,
+                    'Content-Type': 'application/json'
+                }
+            });
+            const data = await response.json();
+            setInvestments(data || []);
         } catch (error) {
             console.error('Error fetching investments:', error);
-        }
-    };
-
-    const saveInvestment = async (investment) => {
-        try {
-            await fetch('/api/investments', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ userId, ...investment }),
-            });
-        } catch (error) {
-            console.error('Error saving investment:', error);
         }
     };
 
@@ -64,23 +54,28 @@ export function Finances(props) {
 
     const addInvestment = async () => {
         if (newInvestment.name && newInvestment.quantity && newInvestment.price) {
-            const newInvestmentData = {
-                name: newInvestment.name,
-                price: parseFloat(newInvestment.price),
-                quantity: parseFloat(newInvestment.quantity),
-                userId
-            };
-
             try {
                 const response = await fetch('/api/investments', {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(newInvestmentData),
+                    headers: { 
+                        'Authorization': `Bearer ${authToken}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        name: newInvestment.name,
+                        price: parseFloat(newInvestment.price),
+                        quantity: parseFloat(newInvestment.quantity),
+                        userId
+                    }),
                 });
 
-                const savedInvestment = await response.json();
+                if (!response.ok) throw new Error('Failed to save investment');
 
-                setInvestments([...investments, savedInvestment]);
+                const createdInvestment = await response.json();
+                setInvestments(prevInvestments => [...prevInvestments, {
+                    ...createdInvestment,
+                    _id: createdInvestment._id || Date.now().toString()
+                }]);
                 setNewInvestment({ name: '', quantity: '', price: '' });
             } catch (error) {
                 console.error('Error adding investment:', error);
@@ -88,12 +83,21 @@ export function Finances(props) {
         }
     };
 
-    const editInvestment = (id, field, value) => {
-        setInvestments(
-            investments.map((investment) =>
-                investment.id === id ? { ...investment, [field]: value } : investment
-            )
+    const editInvestment = async (id, field, value) => {
+        const updatedInvestments = investments.map((investment) => 
+            investment._id === id ? { ...investment, [field]: value } : investment
         );
+        setInvestments(updatedInvestments);
+
+        try {
+            await fetch(`/api/investments/${id}`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ [field]: value }),
+            });
+        } catch (error) {
+            console.error('Error updating investment:', error);
+        }
     };
 
     return (
@@ -104,30 +108,30 @@ export function Finances(props) {
                     <h3 className="top-head">Current Investments</h3>
                     <div className="card-group">
                         {investments.map((investment) => (
-                            <div className="card" key={investment.id}>
+                            <div className="card" key={investment._id}>
                                 <div className="card-body">
                                     <div className="form-group">
-                                        <label htmlFor={`name-${investment.id}`}>Investment Name:</label>
+                                        <label htmlFor={`name-${investment._id}`}>Investment Name:</label>
                                         <input
                                             type="text"
                                             value={investment.name}
-                                            onChange={(e) => editInvestment(investment.id, 'name', e.target.value)}
+                                            onChange={(e) => editInvestment(investment._id, 'name', e.target.value)}
                                         />
                                     </div>
                                     <div className="form-group">
-                                        <label htmlFor={`quantity-${investment.id}`}>Quantity:</label>
+                                        <label htmlFor={`quantity-${investment._id}`}>Quantity:</label>
                                         <input
                                             type="number"
                                             value={investment.quantity}
-                                            onChange={(e) => editInvestment(investment.id, 'quantity', parseFloat(e.target.value))}
+                                            onChange={(e) => editInvestment(investment._id, 'quantity', parseFloat(e.target.value))}
                                         />
                                     </div>
                                     <div className="form-group">
-                                        <label htmlFor={`price-${investment.id}`}>Price:</label>
+                                        <label htmlFor={`price-${investment._id}`}>Price:</label>
                                         <input
                                             type="number"
                                             value={investment.price}
-                                            onChange={(e) => editInvestment(investment.id, 'price', parseFloat(e.target.value))}
+                                            onChange={(e) => editInvestment(investment._id, 'price', parseFloat(e.target.value))}
                                         />
                                     </div>
                                 </div>

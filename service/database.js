@@ -10,6 +10,7 @@ const sharedInvestmentsCollection = db.collection('sharedInvestments');
 
 (async function testConnection() {
     try {
+        await client.connect();
         await db.command({ ping: 1 });
         console.log(`Connect to database`);
     } catch (ex) {
@@ -18,12 +19,12 @@ const sharedInvestmentsCollection = db.collection('sharedInvestments');
     }
 })();
 
-function getUser(name) {
-    return userCollection.findOne({ name: name });
+async function getUser(name) {
+    return await userCollection.findOne({ name });
 }
 
 async function getUserByToken(token) {
-    return await userCollection.findOne({ token: token });
+    return await userCollection.findOne({ token });
 }
 
 async function addUser(user) {
@@ -39,15 +40,19 @@ async function addInvestment(investment) {
         name: investment.name,
         quantity: investment.quantity,
         price: investment.price,
-        userId: new ObjectId(investment.userId),
+        userId: investment.userId,
+        createdAt: new Date()
     };
-    await investmentsCollection.insertOne(newInvestment);
+    const results = await investmentsCollection.insertOne(newInvestment);
+    return {
+        _id: result.insertedId,
+        ...newInvestment
+    };
 }
 
 async function getUserInvestments(userId) {
     try {
-        const investments = await investmentsCollection.find({ userId: new ObjectId(userId) }).toArray();
-        return investments;
+        return await investmentsCollection.find({ userId: new ObjectId(userId) }).toArray();
     } catch (error) {
         console.error('Error getting user investments:', error);
         throw error;
@@ -55,7 +60,7 @@ async function getUserInvestments(userId) {
 }
 
 async function getUserByUsername(userName) {
-    return await usersCollection.findOne({ userName });
+    return await userCollection.findOne({ name: userName });
 }
 
 async function addSharedInvestment(sharedInvestment) {
@@ -79,6 +84,7 @@ module.exports = {
     updateUser,
     addInvestment,
     getUserInvestments,
+    getUserByUsername,
     addSharedInvestment,
     getSharedInvestments,
 };
