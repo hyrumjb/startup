@@ -11,14 +11,20 @@ export function Finances(props) {
     const [authToken, setAuthToken] = useState('');
 
     useEffect(() => {
-        fetchUserId();
+        const token = getCookie('token');
+        if (token) {
+            setAuthToken(token)
+            fetchUserId();
+        } else {
+            console.error('No auth token found');
+        }
     }, [userName]);
 
     useEffect(() => {
-        if (userId) {
+        if (userId && authToken) {
             fetchInvestments();
         }
-    }, [userId]);
+    }, [userId, authToken]);
 
     const fetchUserId = async () => {
         try {
@@ -54,6 +60,10 @@ export function Finances(props) {
 
     const addInvestment = async () => {
         if (newInvestment.name && newInvestment.quantity && newInvestment.price) {
+            if (!userId) {
+                console.error("userId is null. Cannot add investment.");
+                return;
+            }
             try {
                 const response = await fetch('/api/investments', {
                     method: 'POST',
@@ -99,6 +109,12 @@ export function Finances(props) {
             console.error('Error updating investment:', error);
         }
     };
+
+    function getCookie(name) {
+        const value = `; ${document.cookie}`;
+        const parts = value.split(`; ${name}=`);
+        if (parts.length === 2) return parts.pop().split(';').shift();
+    }
 
     return (
         <main className="bg-secondary">

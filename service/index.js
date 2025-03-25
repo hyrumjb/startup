@@ -10,7 +10,7 @@ const port = process.argv.length > 2 ? process.argv[2] : 3000;
 
 app.use(express.json());
 app.use(cookieParser());
-app.use(express.static('dist'));
+app.use(express.static('public'));
 
 var apiRouter = express.Router();
 app.use('/api', apiRouter);
@@ -87,10 +87,10 @@ apiRouter.post('/investments', verifyAuth, async (req, res) => {
         };
         const result = await DB.addInvestment(investment);
         res.status(201).json({
-            _id: result.instertedId,
+            _id: result.insertedId,
             ...investment
         });
-        
+
     } catch (error) {
         res.status(500).json({ error: error.message });
     }
@@ -156,7 +156,7 @@ async function findUser(field, value) {
 
 function setAuthCookie(res, authToken) {
     res.cookie(authCookieName, authToken, {
-        secure: process.env.NODE_ENV === 'production',
+        secure: true,
         httpOnly: true,
         sameSite: 'strict',
     });
