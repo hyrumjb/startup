@@ -44,23 +44,16 @@ async function updateUser(user) {
 }
 
 async function addInvestment(investment) {
-    const results = await investmentsCollection.insertOne(investment);
+    const result = await investmentsCollection.insertOne(investment);
     return {
         _id: result.insertedId,
         ...investment
     };
 }
 
-async function getUserInvestments(token) {
-    if (!token) {
-        throw new Error('Unauthorized: No token provided');
-    }
-    const user = await getUserByToken(token);
-    if (!user) {
-        throw new Error('Unauthorized: Invalid token');
-    }
+async function getUserInvestments(userId) {
     try {
-        return await investmentsCollection.find({ userId: new ObjectId(user._id) }).toArray();
+        return await investmentsCollection.find({ userId: new ObjectId(userId) }).toArray();
     } catch (error) {
         console.error('Error getting user investments:', error);
         throw error;

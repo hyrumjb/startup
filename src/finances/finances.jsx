@@ -11,7 +11,6 @@ export function Finances(props) {
         fetchInvestments();
     }, []);
 
-
     const fetchInvestments = async () => {
         try {
             const response = await fetch('/api/investments', {
@@ -37,34 +36,36 @@ export function Finances(props) {
     };
 
     const addInvestment = async () => {
-        if (newInvestment.name && newInvestment.quantity && newInvestment.price) {
-            try {
-                const response = await fetch('/api/investments', {
-                    method: 'POST',
-                    headers: { 
-                        'Authorization': `Bearer ${authToken}`,
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        name: newInvestment.name,
-                        price: parseFloat(newInvestment.price),
-                        quantity: parseFloat(newInvestment.quantity),
-                        userId
-                    }),
-                    credentials: 'include'
-                });
+        if (!newInvestment.name || !newInvestment.quantity || !newInvestment.price) {
+            alert('Please fill in all fields');
+            return;
+        }
 
-                if (!response.ok) {
-                    const errorData = await response.json();
-                    throw new Error('Failed to save investment');
-                }
+        try {
+            const response = await fetch('/api/investments', {
+                method: 'POST',
+                headers: { 
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    name: newInvestment.name,
+                    price: parseFloat(newInvestment.price),
+                    quantity: parseFloat(newInvestment.quantity)
+                }),
+                credentials: 'include'
+            });
 
-                const responseData = await response.json();
-                setInvestments(prevInvestments => [...prevInvestments, responseData]);
-                setNewInvestment({ name: '', quantity: '', price: '' });
-            } catch (error) {
-                console.error('Error adding investment:', error);
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.error || 'Failed to save investment');
             }
+
+            const createdInvestment = await response.json();
+            setInvestments(prevInvestments => [...prevInvestments, createdInvestment]);
+            setNewInvestment({ name: '', quantity: '', price: '' });
+        } catch (error) {
+            console.error('Error adding investment:', error);
+            alert(error.message);
         }
     };
 
@@ -75,14 +76,19 @@ export function Finances(props) {
         setInvestments(updatedInvestments);
 
         try {
-            await fetch(`/api/investments/${id}`, {
+            const response = await fetch(`/api/investments/${id}`, {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ [field]: value }),
                 credentials: 'include'
             });
+
+            if (!response.ok) {
+                throw new Error('Failed to update investment');
+            }
         } catch (error) {
             console.error('Error updating investment:', error);
+            alert(error.message);
         }
     };
 

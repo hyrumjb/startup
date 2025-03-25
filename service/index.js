@@ -104,17 +104,17 @@ const verifyAuth = async (req, res, next) => {
     try {
         const token = req.cookies[authCookieName];
         if (!token) {
-            return res.status(401).json({ msg: 'No token provided' });
+            return res.status(401).json({ error: 'No token provided' });
         }
         const user = await DB.getUserByToken(token);
         if (!user) {
-            return res.status(401).json({ msg: 'Invalid token' });
+            return res.status(401).json({ error: 'Invalid token' });
         }
         req.user = user;
         next();
     } catch (error) {
         console.error('Auth verification error:', error);
-        res.status(401).json({ msg: 'Authentication failed' });
+        res.status(401).json({ error: 'Authentication failed' });
     }
 };
 
@@ -130,10 +130,15 @@ apiRouter.get('/investments', verifyAuth, async (req, res) => {
 
 apiRouter.post('/investments', verifyAuth, async (req, res) => {
     try {
+        const { name, price, quantity } = req.body;
+        if (!name || !price || !quantity) {
+            return res.status(400).json({ error: 'Missing required fields' });
+        }
+
         const investment = { 
-            name: req.body.name,
-            price: req.body.price,
-            quantity: req.body.quantity,
+            name,
+            price: parseFloat(price),
+            quantity: parseFloat(quantity),
             userId: req.user._id,
             createdAt: new Date()
         };
@@ -214,7 +219,7 @@ function setAuthCookie(res, authToken) {
         httpOnly: true,
         sameSite: 'lax',
         path: '/',
-        maxAge: 7 * 24 * 60 * 60 * 1000
+        maxAge: 7 * 24 * 60 * 60 * 1000 // 7 days
     });
 }
 
