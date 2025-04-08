@@ -17,15 +17,15 @@ class InvestmentNotifier {
     socket = null;
 
     connect() {
-        let protocol = window.location.protocol === 'http:' ? 'ws' : 'wss';
-        let host = window.location.hostname;
-        let port = '';
+        const isLocal = window.location.hostname === 'localhost';
 
-        if (host === 'localhost') {
-            port = ':3000';
-        }
+        const protocol = isLocal ? 'ws' : 'wss';
+        const host = window.location.hostname;
+        const port = isLocal ? '3000' : '';
+
+        const wsUrl = `${protocol}://${host}${isLocal ? ':3000' : ''}/ws`;
         
-        this.socket = new WebSocket(`${protocol}://${host}:${port}/ws`);
+        this.socket = new WebSocket(wsUrl);
         
         this.socket.onopen = () => {
             console.log('WebSocket connected');
@@ -39,6 +39,10 @@ class InvestmentNotifier {
                 console.log('Attempting to reconnect...');
                 this.connect();
             }, 5000);
+        };
+
+        this.socket.onerror = (err) => {
+            console.error('WebSocket error:', err);
         };
 
         this.socket.onmessage = async (msg) => {
@@ -78,10 +82,8 @@ class InvestmentNotifier {
     receiveEvent(event) {
         this.events.push(event);
 
-        this.events.forEach((e) => {
-            this.handlers.forEach((handler) => {
-                handler(e);
-            });
+        this.handlers.forEach((handler) => {
+            handler(event);
         });
     }
 }
