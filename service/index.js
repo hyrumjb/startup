@@ -10,7 +10,7 @@ const { peerProxy } = require('./peerProxy.js')
 const http = require('http')
 
 const authCookieName = 'token';
-const port = process.argv.length > 2 ? process.argv[2] : 3000;
+const port = process.env.PORT || 3000;
 
 app.use(express.json());
 app.use(cookieParser());
@@ -238,5 +238,5 @@ const httpServer = http.createServer(app);
 peerProxy(httpServer);
 
 httpServer.listen(port, () => {
-    console.log('Server running on port 3000');
+    console.log(`Server running on port ${port}`);
 });

@@ -17,10 +17,15 @@ class InvestmentNotifier {
     socket = null;
 
     connect() {
-        // let port = window.location.port;
-        let port = window.location.hostname === 'localhost' ? 3000 : window.location.port;
-        const protocol = window.location.protocol === 'http:' ? 'ws' : 'wss';
-        this.socket = new WebSocket(`${protocol}://${window.location.hostname}:${port}/ws`);
+        let protocol = window.location.protocol === 'http:' ? 'ws' : 'wss';
+        let host = window.location.hostname;
+        let port = '';
+
+        if (host === 'localhost') {
+            port = ':3000';
+        }
+        
+        this.socket = new WebSocket(`${protocol}://${host}:${port}/ws`);
         
         this.socket.onopen = () => {
             console.log('WebSocket connected');
