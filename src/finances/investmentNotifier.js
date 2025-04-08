@@ -1,6 +1,7 @@
 const NewInvestment = {
-    System: 'investment'
-}
+    System: 'investment',
+    Shared: 'shared'
+};
 
 class EventMessage {
     constructor(from, type, value) {

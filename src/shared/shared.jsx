@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './shared.css';
+import { InvestNotifier, NewInvestment } from './investmentNotifier';
 
 export function Shared(props) {
     const userName = props.userName;
@@ -12,20 +13,42 @@ export function Shared(props) {
     const [btcError, setBtcError] = useState(null);
 
     useEffect(() => {
-        if (userName) {
-            fetch('/api/sharedInvestments', {
-                method: 'GET',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
+        const handleSharedEvent = (event) => {
+            if (event.type === NewInvestment.Shared) {
+                console.log('Shared investment event received:', event);
+
+                if (event.from !== 'self') {
+                    fetchSharedInvestments();
+                }
+            }
+        };
+
+        InvestNotifier.addHandler(handleSharedEvent);
+
+        return () => {
+            InvestNotifier.removeHandler(handleSharedEvent);
+        };
+    }, []);
+
+    const fetchSharedInvestments = () => {
+        fetch('/api/sharedInvestments', {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        })
+            .then((response) => response.json())
+            .then((investments) => {
+                setSharedInvestments(investments);
             })
-                .then((response) => response.json())
-                .then((Investments) => {
-                    setSharedInvestments(investments);
-                })
-                .catch((error) => {
-                    console.error('Error fetching shared investments:', error);
-                });
+            .catch((error) => {
+                console.error('Error fetching shared investments:', error);
+            });
+    };
+
+    useEffect(() => {
+        if (userName) {
+            fetchSharedInvestments();
         }
     }, [userName]);
 
@@ -70,6 +93,10 @@ export function Shared(props) {
                     if (data.msg === 'Investment shared successfully!') {
                         alert(`Investment shared with ${newShare.recipient}!`);
                         setNewShare({ investment: '', recipient: '' });
+                        InvestNotifier.broadcastEvent('self', NewInvestment.Shared, {
+                            msg: `shared investment with ${newShare.recipient}`,
+                            data: newShare
+                        });
                     } else {
                         alert('Failed to share investment.');
                     }
