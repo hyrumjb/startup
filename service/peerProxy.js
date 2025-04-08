@@ -1,9 +1,21 @@
-const { WebSocketServer } = require('ws');
+const { WebSocketServer, WebSocket } = require('ws');
+const url = require('url');
 
 function peerProxy(httpServer) {
-    const socketServer = new WebSocketServer({ server: httpServer });
+    const wss = new WebSocketServer({ noServer: true });
 
-    socketServer.on('connection', (socket) => {
+    httpServer.on('upgrade', (request, socket, head) => {
+        const pathname = url.parse(request.url).pathname;
+        if (pathname === '/ws') {
+            wss.handleUpgrade(request, socket, head, (ws) => {
+                wss.emit('connection', ws, request);
+            });
+        } else {
+            socket.destroy();
+        }
+    });
+        
+    wss.on('connection', (socket) => {
         socket.isAlive = true;
 
         socket.on('message', function message(data) {
@@ -20,8 +32,11 @@ function peerProxy(httpServer) {
     });
 
     setInterval(() => {
-        socketServer.clients.forEach(function each(client) {
-            if (client.isAlive === false) return client.terminate();
+        wss.clients.forEach((client) => {
+            if (client.isAlive === false) {
+                console.log('Terminating inactive client');
+                client.terminate();
+            }
 
             client.isAlive = false;
             client.ping();

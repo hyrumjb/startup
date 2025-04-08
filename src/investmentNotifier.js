@@ -14,17 +14,28 @@ class EventMessage {
 class InvestmentNotifier {
     events = [];
     handlers = [];
+    socket = null;
 
-    constructor() {
-        let port = window.location.port;
+    connect() {
+        // let port = window.location.port;
+        let port = window.location.hostname === 'localhost' ? 3000 : window.location.port;
         const protocol = window.location.protocol === 'http:' ? 'ws' : 'wss';
         this.socket = new WebSocket(`${protocol}://${window.location.hostname}:${port}/ws`);
-        this.socket.onopen = (event) => {
+        
+        this.socket.onopen = () => {
+            console.log('WebSocket connected');
             this.receiveEvent(new EventMessage('Investment', NewInvestment.System, { msg: 'connected' }));
         };
-        this.socket.onclose = (event) => {
+
+        this.socket.onclose = () => {
+            console.log('WebSocket disconnected');
             this.receiveEvent(new EventMessage('Investment', NewInvestment.System, { msg: 'disconnected' }));
+            setTimeout(() => {
+                console.log('Attempting to reconnect...');
+                this.connect();
+            }, 5000);
         };
+
         this.socket.onmessage = async (msg) => {
             try {
                 const event = JSON.parse(await msg.data.text());
@@ -34,8 +45,21 @@ class InvestmentNotifier {
     }
 
     broadcastEvent (from, type, value) {
+        if (!this.socket || this.socket.readyState != WebSocket.OPEN) {
+            console.warn('WebSocket is not connected.');
+            return;
+        }
         const event = new EventMessage(from, type, value);
-        this.socket.send(JSON.stringify(event));
+        
+        if (this.socket.readyState === WebSocket.OPEN) {
+            this.socket.send(JSON.stringify(event));
+        } else if (this.socket.readyState === WebSocket.CONNECTING) {
+            this.socket.addEventListener('open', () => {
+                this.socket.send(JSON.stringify(event));
+            }, { once: true });
+        } else {
+            console.error("WebSocket is closed or in an error state.");
+        }
     }
 
     addHandler(handler) {

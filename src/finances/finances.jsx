@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './finances.css';
-import { InvestNotifier, NewInvestment } from './investmentNotifier';
+import { InvestNotifier, NewInvestment } from '../investmentNotifier.js';
 
 export function Finances(props) {
     const userName = props.userName;

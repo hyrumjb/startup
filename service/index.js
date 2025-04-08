@@ -7,6 +7,7 @@ const { ObjectId } = require('mongodb');
 const app = express();
 const DB = require('./database.js')
 const { peerProxy } = require('./peerProxy.js')
+const http = require('http')
 
 const authCookieName = 'token';
 const port = process.argv.length > 2 ? process.argv[2] : 3000;
@@ -224,8 +225,9 @@ function setAuthCookie(res, authToken) {
     });
 }
 
-const httpService = app.listen(port, () => {
-    console.log(`Listening on ${port}`);
-});
+const httpServer = http.createServer(app);
+peerProxy(httpServer);
 
-peerProxy(httpService);
+httpServer.listen(port, () => {
+    console.log('Server running on port 3000');
+});
