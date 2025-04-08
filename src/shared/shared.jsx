@@ -5,6 +5,7 @@ import { InvestNotifier, NewInvestment } from '../investmentNotifier.js';
 
 export function Shared(props) {
     const userName = props.userName;
+    const [availableInvestments, setAvailableInvestments] = useState([]);
 
     const [sharedInvestments, setSharedInvestments] = useState([]);
     const [newShare, setNewShare] = useState({ investment: '', recipient: ''});
@@ -36,6 +37,7 @@ export function Shared(props) {
             headers: {
                 'Content-Type': 'application/json',
             },
+            credentials: 'include'
         })
             .then((response) => response.json())
             .then((investments) => {
@@ -78,7 +80,7 @@ export function Shared(props) {
 
     const shareInvestment = () => {
         if (newShare.investment && newShare.recipient) {
-            fetch('/api/shareInvestment', {
+            fetch('/api/sharedInvestments', {
                 method: 'POST',
                 body: JSON.stringify({
                     investment: newShare.investment,
@@ -87,8 +89,16 @@ export function Shared(props) {
                 headers: {
                     'Content-Type': 'application/json',
                 },
+                credentials: 'include'
             })
-                .then((response) => response.json())
+                .then((response) => {
+                    if (!response.ok) {
+                        return response.json().then(err => {
+                            throw new Error(err.error || 'Failed to share investment');
+                        });
+                    }
+                    return response.json();
+                })
                 .then((data) => {
                     if (data.msg === 'Investment shared successfully!') {
                         alert(`Investment shared with ${newShare.recipient}!`);
@@ -107,6 +117,19 @@ export function Shared(props) {
                 });
         }
     };
+
+    useEffect(() => {
+        fetch('/api/investments', {
+            credintials: 'include'
+        })
+            .then(response => response.json())
+            .then(investments => {
+                setAvailableInvestments(investments);
+            })
+            .catch(error => {
+                console.error('Error fetching investments:', error);
+            });
+    }, []);
 
     return (
         <main className="bg-secondary">
@@ -152,13 +175,18 @@ export function Shared(props) {
                     <div className="inputs">
                         <div>
                             <span>Investment: </span>
-                            <input
-                                type="text"
+                            <select
                                 name="investment"
-                                placeholder="Berkshire Hathaway"
                                 value={newShare.investment}
                                 onChange={handleInputChange}
-                            />
+                            >
+                                <option value="">Select an investment</option>
+                                {availableInvestments.map(investment => (
+                                    <option key={investment._id} value={investment._id}>
+                                        {investment.name}
+                                    </option>
+                                ))}
+                            </select>
                         </div>
                         <div>
                             <span>User: </span>

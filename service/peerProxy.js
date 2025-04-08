@@ -18,8 +18,8 @@ function peerProxy(httpServer) {
     wss.on('connection', (socket) => {
         socket.isAlive = true;
 
-        socket.on('message', function message(data) {
-            socketServer.clients.forEach((client) => {
+        socket.on('message', (data) => {
+            wss.clients.forEach((client) => {
                 if (client !== socket && client.readyState === WebSocket.OPEN) {
                     client.send(data);
                 }

@@ -78,6 +78,15 @@ async function getSharedInvestments(userName) {
     return sharedInvestmentsCollection.find({ recipient: userName }).toArray();
 }
 
+async function getInvestmentById(investmentId) {
+    try {
+        return await investmentsCollection.findOne({ _id: new ObjectId(investmentId) });
+    } catch (error) {
+        console.error('Error getting investment by ID:', error);
+        throw error;
+    }
+}
+
 module.exports = {
     getUser,
     getUserByToken,
@@ -88,4 +97,5 @@ module.exports = {
     getUserByUsername,
     addSharedInvestment,
     getSharedInvestments,
+    getInvestmentById,
 };

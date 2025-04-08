@@ -154,23 +154,32 @@ apiRouter.post('/investments', verifyAuth, async (req, res) => {
 });
 
 apiRouter.post('/sharedInvestments', verifyAuth, async (req, res) => {
-    const { investment: investmentId, recipient } = req.body;
-    const investment = await DB.getUserInvestments(investmentId);
-    const recipientUser = await DB.getUser(recipient);
+    try {
+        const { investment: investmentId, recipient } = req.body;
+        
+        const investment = await DB.getInvestmentById(investmentId);
+        if (!investment) {
+            return res.status(404).json({ error: 'Investment not found' });
+        }
 
-    if (!recipientUser) {
-        return res.status(401).json({ msg: 'Recipient not found.' });
+        const recipientUser = await DB.getUser(recipient);
+        if (!recipientUser) {
+            return res.status(404).json({ error: 'Recipient not found' });
+        }
+    
+        const sharedInvestment = {
+            investment: investmentId, 
+            sharedBy: req.user.name, 
+            recipient: recipientUser.name, 
+            timestamp: Date.now()
+        };
+
+        await DB.addSharedInvestment(sharedInvestment);
+        res.status(200).json({ msg: 'Investment shared successfully!' });
+    } catch (error) {
+        console.error('Error sharing investment:', error);
+        res.status(500).json({ error: error.message });
     }
-
-    const sharedInvestment = {
-        investment, 
-        sharedBy: req.user.name, 
-        recipient: recipientUser.name, 
-        timestamp: Date.now()
-    };
-    await DB.addSharedInvestment(sharedInvestment);
-
-    res.status(200).json({ msg: 'Investment shared successfully!' });
 });
 
 apiRouter.get('/sharedInvestments', verifyAuth, async (req, res) => {

@@ -23,6 +23,8 @@ export function Finances(props) {
             }
         };
 
+        InvestNotifier.connect()
+
         InvestNotifier.addHandler(handleEvent);
 
         return () => {
