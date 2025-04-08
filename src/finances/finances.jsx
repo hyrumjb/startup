@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './finances.css';
+import { InvestNotifier, NewInvestment } from './investmentNotifier';
 
 export function Finances(props) {
     const userName = props.userName;
@@ -9,6 +10,24 @@ export function Finances(props) {
 
     useEffect(() => {
         fetchInvestments();
+    }, []);
+
+    useEffect(() => {
+        const handleEvent = (event) => {
+            if (event.type === NewInvestment.System) {
+                console.log('Received investment event:', event);
+
+                if (event.from !== 'self') {
+                    fetchInvestments();
+                }
+            }
+        };
+
+        InvestNotifier.addHandler(handleEvent);
+
+        return () => {
+            InvestNotifier.removeHandler(handleEvent);
+        };
     }, []);
 
     const fetchInvestments = async () => {
@@ -63,6 +82,11 @@ export function Finances(props) {
             const createdInvestment = await response.json();
             setInvestments(prevInvestments => [...prevInvestments, createdInvestment]);
             setNewInvestment({ name: '', quantity: '', price: '' });
+
+            InvestNotifier.broadcastEvent('self', NewInvestment.System, {
+                msg: 'new investment added',
+                investment: createdInvestment
+            });
         } catch (error) {
             console.error('Error adding investment:', error);
             alert(error.message);
@@ -86,6 +110,11 @@ export function Finances(props) {
             if (!response.ok) {
                 throw new Error('Failed to update investment');
             }
+
+            InvestNotifier.broadcastEvent('self', NewInvestment.System, {
+                msg: `investment ${id} updated`,
+                update: { [field]: value }
+            });
         } catch (error) {
             console.error('Error updating investment:', error);
             alert(error.message);
