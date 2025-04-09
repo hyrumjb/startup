@@ -17,15 +17,8 @@ class InvestmentNotifier {
     socket = null;
 
     connect() {
-        const isLocal = window.location.hostname === 'localhost';
         const protocol = window.location.protocol === 'https:' ? 'wss' : 'ws';
-
-        let wsUrl;
-        if (isLocal) {
-            wsUrl = `ws://localhost:3000/ws`;
-        } else {
-            wsUrl = `${protocol}://${window.location.host}/ws`
-        }
+        const wsUrl = `${protocol}://${window.location.host}/ws`;
 
         console.log('Connecting to WebSocket at:', wsUrl);
         

@@ -256,8 +256,9 @@ function setAuthCookie(res, authToken) {
     });
 }
 
-const httpService = app.listen(port, () => {
+const httpServer = http.createServer(app);
+peerProxy(httpServer);
+
+httpServer.listen(port, () => {
     console.log(`Listening on port ${port}`);
-  });
-  
-  peerProxy(httpService);
+});
