@@ -37,28 +37,25 @@ export function Shared(props) {
         };
     }, [userName]);
 
-    const fetchSharedInvestments = () => {
-        console.log(investments)
-        console.log(userName)
-        fetch('/api/sharedInvestments', {
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            credentials: 'include'
-        })
-            .then((response) => response.json())
-            .then((investments) => {
-                setSharedInvestments(investments);
-            })
-            .catch((error) => {
-                console.error('Error fetching shared investments:', error);
-            });
-    };
-
     useEffect(() => {
+        const fetchFullSharedInvestments = async () => {
+            try {
+                const response = await fetch('/api/sharedInvestments', {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    credentials: 'include'
+                });
+                const investments = await response.json();
+                setSharedInvestments(investments);
+            } catch (error) {
+                console.error('Error fetching shared investments:', error);
+            }
+        };
+
         if (userName) {
-            fetchSharedInvestments();
+            fetchFullSharedInvestments();
         }
     }, [userName]);
 

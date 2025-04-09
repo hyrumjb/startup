@@ -73,6 +73,17 @@ class InvestmentNotifier {
         }
     }
 
+    broadcastSharedInvestment(investment, sharedBy, recipientUser) {
+        const event = new EventMessage('Investment', NewInvestment.Shared, {
+            investmentId: investment._id,
+            investmentName: investment.name,
+            sharedBy: req.user.name,
+            recipient: recipientUser.name
+        });
+
+        this.broadcastEvent('self', NewInvestment.Shared, event.value);
+    }
+
     addHandler(handler) {
         this.handlers.push(handler);
     }
@@ -83,7 +94,7 @@ class InvestmentNotifier {
 
     receiveEvent(event) {
         this.events.push(event);
-
+        
         this.handlers.forEach((handler) => {
             handler(event);
         });

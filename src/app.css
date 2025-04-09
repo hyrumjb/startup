@@ -8,6 +8,7 @@ html, body {
     height: 100%;
     margin: 0;
     padding: 0;
+    overflow-y: auto;
 }
 
 #root {
@@ -19,14 +20,14 @@ html, body {
 .custom-bg {
     background-color: rgb(245, 255, 255);
     color: lightgray;
-    min-height: 100vh;
+    flex-grow: 1;
 }
 
 .body {
     display: flex;
     flex-direction: column;
     min-height: 100vh;
-    width: 100%;
+    overflow-y: auto;
 }
 
 header {
@@ -34,20 +35,21 @@ header {
 }
 
 main {
-    flex: 1;
+    flex-grow: 1;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
+    padding: 2rem;
     min-height: 60vh;
+    overflow-y: auto;
 }
 
 footer {
-    flex: 0 0 30px;
-    position: fixed;
+    flex-shrink: 0;
     width: 100%;
-    bottom: 0;
-    margin-bottom: 0;
+    margin-top: auto;
+    padding: 1rem 0;
     padding-bottom: 0;
     overflow-x: hidden;
 }
@@ -65,7 +67,7 @@ menu .nav-item{
 
 footer a {
     float: right;
-    margin-bottom: 2em;
+    margin-bottom: 0.5em;
 }
 
 footer .container-fluid {
@@ -78,9 +80,11 @@ footer .container-fluid {
         display: none;
     }
     footer {
-        display: none;
+        display: block;
+        margin-top: auto;
     }
     main {
         flex: 1;
+        padding-top: 1rem;
     }
 }

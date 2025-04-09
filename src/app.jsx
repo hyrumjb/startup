@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './app.css';
 
@@ -62,7 +62,7 @@ function App() {
                             exact 
                     />
                     <Route path='/finances' element={<Finances userName={userName} />} />
-                    <Route path='/shared' element={<Shared />} />
+                    <Route path='/shared' element={<Shared userName={userName} />} />
                     <Route path='/about' element={<About />} />
                     <Route path='*' element={<NotFound />} />
                 </Routes>

@@ -168,7 +168,13 @@ apiRouter.post('/sharedInvestments', verifyAuth, async (req, res) => {
         }
     
         const sharedInvestment = {
-            investment: investmentId, 
+            investment: {
+                id: investment._id,
+                name: investment.name,
+                price: investment.price,
+                quantity: investment.quantity,
+                createdAt: investment.createdAt
+            }, 
             sharedBy: req.user.name, 
             recipient: recipientUser.name, 
             timestamp: Date.now()
