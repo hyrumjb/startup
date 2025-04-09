@@ -173,7 +173,6 @@ apiRouter.post('/sharedInvestments', verifyAuth, async (req, res) => {
                 name: investment.name,
                 price: investment.price,
                 quantity: investment.quantity,
-                createdAt: investment.createdAt
             }, 
             sharedBy: req.user.name, 
             recipient: recipientUser.name, 
