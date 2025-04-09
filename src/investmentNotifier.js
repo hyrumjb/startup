@@ -18,12 +18,16 @@ class InvestmentNotifier {
 
     connect() {
         const isLocal = window.location.hostname === 'localhost';
+        const protocol = window.location.protocol === 'https:' ? 'wss' : 'ws';
 
-        const protocol = isLocal ? 'ws' : 'wss';
-        const host = window.location.hostname;
-        const port = isLocal ? '3000' : '';
+        let wsUrl;
+        if (isLocal) {
+            wsUrl = `ws://localhost:3000/ws`;
+        } else {
+            wsUrl = `${protocol}://${window.location.host}/ws`
+        }
 
-        const wsUrl = `${protocol}://${host}${isLocal ? ':3000' : ''}/ws`;
+        console.log('Connecting to WebSocket at:', wsUrl);
         
         this.socket = new WebSocket(wsUrl);
         
@@ -77,7 +81,7 @@ class InvestmentNotifier {
         const event = new EventMessage('Investment', NewInvestment.Shared, {
             investmentId: investment._id,
             investmentName: investment.name,
-            sharedBy: req.user.name,
+            sharedBy: sharedBy,
             recipient: recipientUser.name
         });
 

@@ -10,25 +10,14 @@ const { peerProxy } = require('./peerProxy.js')
 const http = require('http')
 
 const authCookieName = 'token';
-const port = process.env.PORT || 3000;
+const port = process.argv.length > 2 ? process.argv[2] : 3000;
 
 app.use(express.json());
 app.use(cookieParser());
 
-app.use((req, res, next) => {
-    res.header('Access-Control-Allow-Origin', 'http://localhost:5173');
-    res.header('Access-Control-Allow-Credentials', 'true');
-    res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
-    next();
-});
+app.use(express.static('public'));
 
-if (process.env.NODE_ENV === 'production') {
-    app.use(express.static(path.join(__dirname, '../dist')));
-} else {
-    app.use(express.static('public'));
-}
-
-var apiRouter = express.Router();
+const apiRouter = express.Router();
 app.use(`/api`, apiRouter);
 
 apiRouter.get('/users/:userName', async (req, res) => {
@@ -260,17 +249,15 @@ async function findUser(field, value) {
 
 function setAuthCookie(res, authToken) {
     res.cookie(authCookieName, authToken, {
-        secure: process.env.NODE_ENV === 'production',
+        secure: true,
         httpOnly: true,
-        sameSite: 'lax',
+        sameSite: 'strict',
         path: '/',
-        maxAge: 7 * 24 * 60 * 60 * 1000 // 7 days
     });
 }
 
-const httpServer = http.createServer(app);
-peerProxy(httpServer);
-
-httpServer.listen(port, () => {
-    console.log(`Server running on port ${port}`);
-});
+const httpService = app.listen(port, () => {
+    console.log(`Listening on port ${port}`);
+  });
+  
+  peerProxy(httpService);
