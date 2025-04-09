@@ -108,8 +108,8 @@ For this deliverable I did the following. I checked the box `[x]` and added a de
 
 For this deliverable I did the following. I checked the box `[x]` and added a description for things I completed.
 
-- [ ] **Backend listens for WebSocket connection** - I did not complete this part of the deliverable.
-- [ ] **Frontend makes WebSocket connection** - I did not complete this part of the deliverable.
-- [ ] **Data sent over WebSocket connection** - I did not complete this part of the deliverable.
-- [ ] **WebSocket data displayed** - I did not complete this part of the deliverable.
-- [ ] **Application is fully functional** - I did not complete this part of the deliverable.
+- [X] **Backend listens for WebSocket connection** - The backend server is built to listen and connect to the WebSocket connection.
+- [X] **Frontend makes WebSocket connection** - The frontend automatically loads up the WebSocket connection.
+- [X] **Data sent over WebSocket connection** - Financial information is consistenly sent between the frontend and the backend to be visible to users.
+- [X] **WebSocket data displayed** - The WebSocket data can be viewed throughout the application with the editable financial information.
+- [X] **Application is fully functional** - My application is fully usable to keep track of financial information and to share investments.
