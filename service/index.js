@@ -182,6 +182,35 @@ apiRouter.post('/sharedInvestments', verifyAuth, async (req, res) => {
     }
 });
 
+apiRouter.put('/investments/:id', verifyAuth, async (req, res) => {
+    const { id } = req.params;
+    const { name, price, quantity } = req.body;
+
+    console.log('Updating investment with ID:', id);
+    console.log('Updated data:', { name, price, quantity });
+
+    try {
+        const investment = await DB.getInvestmentById(id);
+
+        if (!investment) {
+            return res.status(404).json({ error: 'Investment not found' });
+        }
+
+        const updatedInvestment = {
+            ...investment,
+            name: name || investment.name,
+            price: price ? parseFloat(price) : investment.price,
+            quantity: quantity ? parseFloat(quantity) : investment.quantity,
+        };
+
+        const result = await DB.updateInvestment(id, updatedInvestment);
+        res.status(200).json(result);
+    } catch (error) {
+        console.error('Error updating investment:', error);
+        res.status(500).json({ error: 'Failed to update investment' });
+    }
+});
+
 apiRouter.get('/sharedInvestments', verifyAuth, async (req, res) => {
     const sharedInvestments = await DB.getSharedInvestments(req.user.name);
     res.json(sharedInvestments);

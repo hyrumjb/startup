@@ -49,7 +49,9 @@ class InvestmentNotifier {
             try {
                 const event = JSON.parse(await msg.data.text());
                 this.receiveEvent(event);
-            } catch {}
+            } catch (err) {
+                console.error('Error parsing WebSocket message:', err);
+            }
         };
     }
 

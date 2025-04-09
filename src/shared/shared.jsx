@@ -6,7 +6,6 @@ import { InvestNotifier, NewInvestment } from '../investmentNotifier.js';
 export function Shared(props) {
     const userName = props.userName;
     const [availableInvestments, setAvailableInvestments] = useState([]);
-
     const [sharedInvestments, setSharedInvestments] = useState([]);
     const [newShare, setNewShare] = useState({ investment: '', recipient: ''});
     const [btcData, setBtcData] = useState(null);
@@ -16,10 +15,17 @@ export function Shared(props) {
     useEffect(() => {
         const handleSharedEvent = (event) => {
             if (event.type === NewInvestment.Shared) {
-                console.log('Shared investment event received:', event);
+                const sharedData = event.value.data || event.value;
 
-                if (event.from !== 'self') {
-                    fetchSharedInvestments();
+                if (sharedData.recipient === userName) {
+                    setSharedInvestments(prev => [
+                        ...prev,
+                        {
+                            investment: sharedData.investment,
+                            sharedBy: event.value.sharedBy || 'unknown',
+                            timestamp: sharedData.timestamp || new Date().toISOString(),
+                        }
+                    ]);
                 }
             }
         };
@@ -29,9 +35,11 @@ export function Shared(props) {
         return () => {
             InvestNotifier.removeHandler(handleSharedEvent);
         };
-    }, []);
+    }, [userName]);
 
     const fetchSharedInvestments = () => {
+        console.log(investments)
+        console.log(userName)
         fetch('/api/sharedInvestments', {
             method: 'GET',
             headers: {
@@ -62,7 +70,6 @@ export function Shared(props) {
                 }
                 return response.json();
             })
-
             .then((data) => {
                 setBtcData(data);
                 setBtcLoading(false);
@@ -105,7 +112,8 @@ export function Shared(props) {
                         setNewShare({ investment: '', recipient: '' });
                         InvestNotifier.broadcastEvent('self', NewInvestment.Shared, {
                             msg: `shared investment with ${newShare.recipient}`,
-                            data: newShare
+                            data: { ...newShare, timestamp: new Date().toISOString() },
+                            recipient: newShare.recipient,
                         });
                     } else {
                         alert('Failed to share investment.');
@@ -120,7 +128,7 @@ export function Shared(props) {
 
     useEffect(() => {
         fetch('/api/investments', {
-            credintials: 'include'
+            credentials: 'include'
         })
             .then(response => response.json())
             .then(investments => {
@@ -164,6 +172,7 @@ export function Shared(props) {
                                 <div className="card-header">@{investment.sharedBy}</div>
                                 <div className="card-body">
                                     <h5 className="card-title">{investment.investment}</h5>
+                                    <p>Timestamp: {new Date(investment.timestamp).toLocaleString()}</p>
                                 </div>
                             </div>
                         ))}

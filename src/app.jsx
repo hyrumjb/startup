@@ -8,11 +8,16 @@ import { Finances } from './finances/finances';
 import { Shared } from './shared/shared';
 import { About } from './about/about';
 import { AuthState } from './login/authState';
+import { InvestNotifier } from './investmentNotifier.js';
 
 function App() {
     const [userName, setUserName] = React.useState(localStorage.getItem('userName') || '');
     const currentAuthState = userName ? AuthState.Authenticated : AuthState.Unauthenticated;
     const [authState, setAuthState] = React.useState(currentAuthState);
+
+    useEffect(() => {
+        InvestNotifier.connect();
+    }, []);
 
     return (
         <BrowserRouter>

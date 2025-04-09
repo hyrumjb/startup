@@ -66,7 +66,7 @@ async function getUserByUsername(userName) {
 
 async function addSharedInvestment(sharedInvestment) {
     const newSharedInvestment = {
-        investment: new ObjectId(sharedInvestment.investment),
+        investment: sharedInvestment.investment,
         sharedBy: sharedInvestment.sharedBy,
         recipient: sharedInvestment.recipient,
         timestamp: new Date(),
@@ -75,14 +75,30 @@ async function addSharedInvestment(sharedInvestment) {
 }
 
 async function getSharedInvestments(userName) {
-    return sharedInvestmentsCollection.find({ recipient: userName }).toArray();
+    return await db.collection('sharedInvestments').find({
+        recipient: userName
+    }).toArray();
 }
 
-async function getInvestmentById(investmentId) {
+async function getInvestmentById(id) {
     try {
-        return await investmentsCollection.findOne({ _id: new ObjectId(investmentId) });
+        return await investmentsCollection.findOne({ _id: new ObjectId(id) });
     } catch (error) {
         console.error('Error getting investment by ID:', error);
+        throw error;
+    }
+}
+
+async function updateInvestment(id, updatedData) {
+    try {
+        const result = await db.collection('investments').updateOne (
+            { _id: new ObjectId(id) },
+            { $set: updatedData }
+        );
+        console.log('Update result:', result);
+        return result.modifiedCount > 0 ? updatedData : null;
+    } catch (error) {
+        console.error('Error updating investment:', error);
         throw error;
     }
 }
@@ -98,4 +114,5 @@ module.exports = {
     addSharedInvestment,
     getSharedInvestments,
     getInvestmentById,
+    updateInvestment,
 };
