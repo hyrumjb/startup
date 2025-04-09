@@ -7,12 +7,13 @@ const { ObjectId } = require('mongodb');
 const app = express();
 const DB = require('./database.js')
 const { peerProxy } = require('./peerProxy.js')
-const http = require('http')
 
 const authCookieName = 'token';
+
 const port = process.argv.length > 2 ? process.argv[2] : 3000;
 
 app.use(express.json());
+
 app.use(cookieParser());
 
 app.use(express.static('public'));
@@ -252,13 +253,11 @@ function setAuthCookie(res, authToken) {
         secure: true,
         httpOnly: true,
         sameSite: 'strict',
-        path: '/',
     });
 }
 
-const httpServer = http.createServer(app);
-peerProxy(httpServer);
-
-httpServer.listen(port, () => {
+const httpService = app.listen(port, () => {
     console.log(`Listening on port ${port}`);
-});
+  });
+  
+  peerProxy(httpService);  
